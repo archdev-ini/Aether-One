@@ -12,16 +12,6 @@ export default function Home() {
         <section className="w-full py-20 md:py-32">
           <div className="container px-4 md:px-6 z-10">
             <div className="max-w-4xl mx-auto text-center space-y-6">
-              <div className="flex justify-center items-center gap-4">
-                <Avatar>
-                  <AvatarImage src="https://i.pravatar.cc/150?u=inioluwa" alt="Inioluwa Oladipupo" />
-                  <AvatarFallback>IO</AvatarFallback>
-                </Avatar>
-                <div className="text-left">
-                  <p className="font-semibold">Inioluwa Oladipupo</p>
-                  <p className="text-sm text-primary">World Architecture Day Prelaunch is Live!</p>
-                </div>
-              </div>
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
                 Aether — The Creative Ecosystem for Architects & Designers
               </h1>
