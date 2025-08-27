@@ -36,10 +36,8 @@ export default function Home() {
           style={{
             backgroundImage: `
               linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)),
-              linear-gradient(90deg, hsla(var(--border)/0.5) 1px, transparent 1px),
-              linear-gradient(hsla(var(--border)/0.5) 1px, transparent 1px)
+              url("data:image/svg+xml,%3Csvg width='52' height='52' viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 16h20v20H16z' fill='none' stroke='hsla(var(--border)/0.2)' stroke-width='1'/%3E%3Cpath d='M0 0h52v52H0z' fill='none'/%3E%3C/svg%3E")
             `,
-            backgroundSize: '100%, 100%, 50px 50px, 50px 50px',
           }}
         >
            <div className="absolute inset-0 bg-background/90 z-0"></div>
