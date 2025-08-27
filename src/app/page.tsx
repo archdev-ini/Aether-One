@@ -1,8 +1,30 @@
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, ToyBrick, Users } from 'lucide-react';
+import { BookOpen, ToyBrick, Users } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+const events = [
+  {
+    title: 'Aether Community Pre-Launch: Why Community Matters in Design Education',
+    description: 'Join us on World Architecture Day, October 6, 2025, for the pre-launch of Aether Community, a digital-first architecture and design school empowering African creatives. Discover how peer learning, mentorship, and collective growth are transforming design education. Whether you’re a student dreaming of bold designs or a professional shaping Africa’s built future, this event is for you!',
+    whatToExpect: [
+      'Inspiring opening by Inioluwa Oladipupo, Aether Community Lead.',
+      '1–2 minute teaser trailer unveiling Aether’s vision.',
+      'Panel discussion with a student, early-career designer, and seasoned architect on why community drives design innovation.',
+      'Live Q&A and poll to share your voice.',
+      'First look at Aether’s platforms and a teaser for our full launch on December 8, 2025.',
+    ],
+    whyAttend: {
+      students: 'Connect with peers, explore free learning resources, and get inspired to build your portfolio.',
+      professionals: 'Network with industry leaders, discover mentorship opportunities, and shape African design. Be part of a movement to redefine design education from Nigeria to the world!',
+    },
+    cta: {
+      href: '#',
+      label: 'See the Full Schedule',
+    },
+  },
+];
 
 export default function Home() {
   return (
@@ -70,37 +92,35 @@ export default function Home() {
                 </p>
               </div>
 
-              <Card className="overflow-hidden">
-                <CardHeader>
-                  <CardTitle className="text-2xl sm:text-3xl">Aether Community Pre-Launch: Why Community Matters in Design Education</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 text-foreground/80">
-                  <p>
-                    Join us on World Architecture Day, October 6, 2025, for the pre-launch of Aether Community, a digital-first architecture and design school empowering African creatives. Discover how peer learning, mentorship, and collective growth are transforming design education. Whether you’re a student dreaming of bold designs or a professional shaping Africa’s built future, this event is for you!
-                  </p>
-                  <div>
-                    <h4 className="font-semibold text-lg text-foreground mb-2">What to Expect:</h4>
-                    <ul className="list-disc list-inside space-y-2">
-                      <li>Inspiring opening by Inioluwa Oladipupo, Aether Community Lead.</li>
-                      <li>1–2 minute teaser trailer unveiling Aether’s vision.</li>
-                      <li>Panel discussion with a student, early-career designer, and seasoned architect on why community drives design innovation.</li>
-                      <li>Live Q&A and poll to share your voice.</li>
-                      <li>First look at Aether’s platforms and a teaser for our full launch on December 8, 2025.</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-lg text-foreground mb-2">Why Attend?</h4>
-                    <p>
-                      <strong>Students:</strong> Connect with peers, explore free learning resources, and get inspired to build your portfolio.
-                      <br />
-                      <strong>Professionals:</strong> Network with industry leaders, discover mentorship opportunities, and shape African design. Be part of a movement to redefine design education from Nigeria to the world!
-                    </p>
-                  </div>
-                   <Button asChild size="lg" className="w-full sm:w-auto">
-                    <Link href="#">See the Full Schedule</Link>
-                  </Button>
-                </CardContent>
-              </Card>
+              {events.map((event, index) => (
+                <Card key={index} className="overflow-hidden">
+                  <CardHeader>
+                    <CardTitle className="text-2xl sm:text-3xl">{event.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4 text-foreground/80">
+                    <p>{event.description}</p>
+                    <div>
+                      <h4 className="font-semibold text-lg text-foreground mb-2">What to Expect:</h4>
+                      <ul className="list-disc list-inside space-y-2">
+                        {event.whatToExpect.map((item, i) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-lg text-foreground mb-2">Why Attend?</h4>
+                      <p>
+                        <strong>Students:</strong> {event.whyAttend.students}
+                        <br />
+                        <strong>Professionals:</strong> {event.whyAttend.professionals}
+                      </p>
+                    </div>
+                     <Button asChild size="lg" className="w-full sm:w-auto">
+                      <Link href={event.cta.href}>{event.cta.label}</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </section>
