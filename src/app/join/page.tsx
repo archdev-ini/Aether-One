@@ -182,7 +182,10 @@ export default function JoinPage() {
                                                 </FormControl>
                                                 <SelectContent>
                                                     <SelectItem value="student">Student</SelectItem>
-                                                    <SelectItem value="professional-graduate">Professional Graduate</SelectItem>
+                                                    <SelectItem value="architect">Architect</SelectItem>
+                                                    <SelectItem value="designer">Designer</SelectItem>
+                                                    <SelectItem value="engineer">Engineer</SelectItem>
+                                                    <SelectItem value="developer">Developer</SelectItem>
                                                     <SelectItem value="other">Other</SelectItem>
                                                 </SelectContent>
                                             </Select>

@@ -35,7 +35,15 @@ export async function createUser(values: z.infer<typeof formSchema>) {
         const verificationTokenExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
 
         await db.createUser({
-            ...validatedData,
+            fullName: validatedData.fullName,
+            email: validatedData.email,
+            cityCountry: validatedData.location,
+            ageRange: validatedData.ageRange,
+            currentRole: validatedData.currentRole,
+            mainInterest: validatedData.mainInterest,
+            preferredCommunityPlatform: validatedData.preferredPlatform,
+            socialHandle: validatedData.socialHandle,
+            goals: validatedData.goals,
             aetherId,
             verificationToken,
             verificationTokenExpires,

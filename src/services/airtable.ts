@@ -5,11 +5,11 @@
 type User = {
     fullName: string;
     email: string;
-    location: string;
+    cityCountry: string;
     ageRange: string;
     currentRole: string;
     mainInterest: string;
-    preferredPlatform: string;
+    preferredCommunityPlatform: string;
     socialHandle?: string;
     goals?: string;
     aetherId: string;
@@ -29,19 +29,26 @@ export const db = {
         return user || null;
     },
 
-    async createUser(userData: User): Promise<User> {
+    async createUser(userData: Omit<User, 'createdAt' | 'activatedAt'>): Promise<User> {
         const existingUserIndex = users.findIndex(u => u.email === userData.email);
+
+        const userRecord: User = {
+            ...userData,
+            // In a real DB, these would be handled by the DB.
+            // createdAt: new Date(), 
+            // activatedAt: null,
+        };
 
         if (existingUserIndex !== -1) {
             // Update existing unverified user
             console.log(`[DB MOCK] Updating existing user: ${userData.email}`);
-            users[existingUserIndex] = { ...users[existingUserIndex], ...userData };
+            users[existingUserIndex] = { ...users[existingUserIndex], ...userRecord };
             return users[existingUserIndex];
         } else {
             // Create new user
             console.log(`[DB MOCK] Creating new user: ${userData.email} with Aether ID: ${userData.aetherId}`);
-            users.push(userData);
-            return userData;
+            users.push(userRecord);
+            return userRecord;
         }
     },
 
@@ -60,6 +67,8 @@ export const db = {
 
         const user = users[userIndex];
         user.verified = true;
+        // In a real DB, you'd set activatedAt here.
+        // user.activatedAt = new Date();
         user.verificationToken = ''; // Invalidate the token after use
         
         console.log(`[DB MOCK] User ${user.email} verified successfully.`);
