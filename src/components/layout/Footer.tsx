@@ -1,84 +1,66 @@
 import { Logo } from "@/components/Logo";
-import { Twitter, Github, Linkedin } from "lucide-react";
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { AetherIDBadge } from "../AetherIDBadge";
 
 const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/join", label: "Get Aether ID" },
   { href: "/programs", label: "Programs" },
   { href: "/about", label: "About" },
-  { href: "/join", label: "Join" },
-  { href: "/faq", label: "FAQ" },
-];
-
-const socialLinks = [
-  { href: "#", icon: Twitter, label: "Twitter" },
-  { href: "#", icon: Github, label: "GitHub" },
-  { href: "#", icon: Linkedin, label: "LinkedIn" },
+  { href: "/faq", label: "FAQ/Contact" },
 ];
 
 export function Footer() {
   return (
     <footer className="bg-card border-t">
-      <div className="container py-12">
+      <div className="container py-12 text-foreground/70">
         <div className="grid gap-8 md:grid-cols-3">
-          <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-2">
-              <Logo className="h-7 w-7 text-primary" />
-              <span className="text-xl font-bold font-headline">Aether</span>
-            </Link>
-            <p className="text-sm text-foreground/70">
-              The future of digital design education and community.
-            </p>
+          {/* Navigation */}
+          <div className="space-y-3">
+            <h4 className="font-semibold text-foreground">Navigate</h4>
+            <ul className="space-y-2">
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm transition-colors hover:text-primary"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="grid grid-cols-2 gap-8 md:col-span-2 md:grid-cols-3">
-            <div className="space-y-3">
-              <h4 className="font-semibold">Navigate</h4>
-              <ul className="space-y-2">
-                {navLinks.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-foreground/70 transition-colors hover:text-primary"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="space-y-3">
-              <h4 className="font-semibold">Legal</h4>
-              <ul className="space-y-2">
+          
+          {/* Legal */}
+          <div className="flex flex-col items-center justify-center text-center">
+             <AetherIDBadge className="h-12 w-12 mb-4 text-primary" />
+             <p className="text-sm">
+                © {new Date().getFullYear()} Aether Ecosystem. All rights reserved.
+             </p>
+             <div className="text-sm mt-2">
+                 <Link href="#" className="transition-colors hover:text-primary">Privacy Policy</Link>
+                 <span className="mx-2">|</span>
+                 <Link href="#" className="transition-colors hover:text-primary">Terms of Service</Link>
+             </div>
+          </div>
+
+          {/* Contact */}
+          <div className="space-y-3 md:text-right">
+            <h4 className="font-semibold text-foreground">Contact</h4>
+            <ul className="space-y-2">
                 <li>
-                  <Link href="#" className="text-sm text-foreground/70 transition-colors hover:text-primary">
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-sm text-foreground/70 transition-colors hover:text-primary">
-                    Terms of Service
-                  </Link>
-                </li>
-              </ul>
-            </div>
-             <div className="space-y-3">
-              <h4 className="font-semibold">Connect</h4>
-              <div className="flex items-center space-x-2">
-                {socialLinks.map((link) => (
-                  <Button key={link.label} asChild variant="ghost" size="icon">
-                    <a href={link.href} aria-label={link.label} target="_blank" rel="noopener noreferrer">
-                      <link.icon className="h-5 w-5 text-foreground/70 transition-colors hover:text-primary" />
+                    <a href="mailto:contact@aethercommunity.vercel.app" className="text-sm transition-colors hover:text-primary">
+                        contact@aethercommunity.vercel.app
                     </a>
-                  </Button>
-                ))}
-              </div>
-            </div>
+                </li>
+                <li>
+                    <Link href="/faq" className="text-sm transition-colors hover:text-primary font-semibold">
+                       Contact Us with Aether ID
+                    </Link>
+                </li>
+            </ul>
           </div>
-        </div>
-        <div className="mt-8 border-t pt-8">
-          <p className="text-center text-sm text-foreground/60">
-            © {new Date().getFullYear()} Aether Digital Design. All rights reserved.
-          </p>
         </div>
       </div>
     </footer>

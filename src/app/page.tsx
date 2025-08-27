@@ -1,135 +1,262 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Zap, Users, BrainCircuit } from 'lucide-react';
+import { ArrowRight, Bot, Building, Calendar, Check, Disc, Heart, Instagram, LandPlot, Linkedin, MessageSquare, Send, Twitter, Users, Video, X, Zap } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { AetherIDBadge } from '@/components/AetherIDBadge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
+        {/* Hero Section */}
         <section className="relative w-full py-20 md:py-32 lg:py-40 flex items-center justify-center text-center bg-card">
           <div className="absolute inset-0 z-0">
              <Image
                 src="https://picsum.photos/1920/1080"
-                alt="Abstract architectural design"
-                data-ai-hint="abstract architecture"
+                alt="Abstract architectural render with white, blue, and purple palette"
+                data-ai-hint="abstract architecture design"
                 fill
                 className="object-cover opacity-10"
              />
              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
           </div>
           <div className="container px-4 md:px-6 z-10">
-            <div className="max-w-3xl mx-auto space-y-6">
+            <div className="max-w-3xl mx-auto space-y-6 flex flex-col items-center">
+              <AetherIDBadge className="h-20 w-20 mb-4 animate-pulse" />
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-primary">
-                The Future of Design Education
+                Your Aether ID: Unlock a World of Design
               </h1>
               <p className="text-lg text-foreground/80 md:text-xl">
-                Aether is a digital-first school and community for the next generation of architects and designers. Learn, create, and connect.
+                Aether Ecosystem blends architecture and technology to empower creators. Get your Aether ID to access cutting-edge courses, global community, and real-world challenges.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
                 <Button asChild size="lg" className="transition-transform duration-300 hover:scale-105">
-                  <Link href="/join">Join Aether Now</Link>
+                  <Link href="/join">Get Your Aether ID</Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="transition-transform duration-300 hover:scale-105">
-                  <Link href="/programs">Explore Programs <ArrowRight className="ml-2" /></Link>
+                <Button asChild size="lg" variant="outline" className="transition-transform duration-300 hover:scale-105 hover:bg-accent/50">
+                  <Link href="#about">Discover Aether <ArrowRight className="ml-2" /></Link>
                 </Button>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="w-full py-16 md:py-24 bg-background">
+        {/* About Aether Section */}
+        <section id="about" className="w-full py-16 md:py-24 bg-background scroll-mt-16">
           <div className="container px-4 md:px-6">
             <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-center">
-                <div className="space-y-4">
-                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">What is Aether Ecosystem?</h2>
-                  <p className="text-foreground/70 md:text-lg">
-                    We offer two distinct learning paths designed to empower your creative journey. Whether you're building a foundation or pushing the boundaries of design, Aether provides the tools and community for your success.
+                <div className="space-y-6">
+                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Aether Ecosystem: Where Design Meets Tomorrow</h2>
+                  <p className="text-lg text-foreground/70">
+                    Aether Ecosystem is a digital-first school and community redefining architecture through AI, VR, and computational design. Your Aether ID unlocks a vibrant network of designers and exclusive learning opportunities.
                   </p>
+                  <p className="text-lg text-foreground/70">
+                    Our vision is to inspire and equip creators to build a sustainable, tech-driven future. Start with your Aether ID to join the movement. From parametric design courses to virtual collaboration spaces, your Aether ID connects you to tools and ideas shaping the design world.
+                  </p>
+                  <Button asChild size="lg" className="transition-transform duration-300 hover:scale-105 shadow-primary/20 hover:shadow-primary/40 hover:shadow-lg">
+                    <Link href="/join">Start with Aether ID</Link>
+                  </Button>
                 </div>
-                <div className="grid grid-cols-1 gap-6">
-                  <Card className="transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <CardHeader>
-                      <CardTitle className="text-2xl">Aether School</CardTitle>
-                      <CardDescription>Structured courses and foundational learning for aspiring designers.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p>Master the fundamentals of digital design and architecture with our comprehensive curriculum, expert-led workshops, and hands-on projects.</p>
-                       <Button asChild variant="link" className="px-0 mt-2">
-                          <Link href="/programs#school">Learn More <ArrowRight className="ml-1" /></Link>
-                        </Button>
-                    </CardContent>
-                  </Card>
-                   <Card className="transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <CardHeader>
-                      <CardTitle className="text-2xl">Horizon Studio</CardTitle>
-                      <CardDescription>Advanced, project-based exploration for innovative creators.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p>Collaborate on cutting-edge projects, experiment with emerging technologies, and build a portfolio that stands out in the industry.</p>
-                       <Button asChild variant="link" className="px-0 mt-2">
-                          <Link href="/programs#studio">Discover the Studio <ArrowRight className="ml-1" /></Link>
-                        </Button>
-                    </CardContent>
-                  </Card>
+                <div className="relative aspect-square">
+                     <Image
+                        src="https://picsum.photos/600/600"
+                        alt="Futuristic design project"
+                        data-ai-hint="futuristic design"
+                        fill
+                        className="object-cover rounded-lg shadow-xl"
+                    />
+                    <div className="absolute -bottom-4 -right-4">
+                        <AetherIDBadge className="h-24 w-24 " />
+                    </div>
                 </div>
             </div>
           </div>
         </section>
 
+        {/* Offerings Section */}
         <section className="w-full py-16 md:py-24 bg-card">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-primary">Why Choose Aether?</h2>
-                <p className="max-w-[900px] text-foreground/70 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  We are more than just an online school. We are a thriving ecosystem designed for growth, collaboration, and innovation.
-                </p>
-              </div>
-            </div>
-            <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:grid-cols-3">
-              <div className="grid gap-2 text-center transition-transform duration-300 hover:scale-105">
-                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent/20 text-accent-foreground">
-                    <Zap className="h-8 w-8 text-primary" />
-                 </div>
-                <h3 className="text-xl font-bold">Cutting-Edge Curriculum</h3>
-                <p className="text-foreground/70">Our programs are constantly updated to reflect the latest industry trends and technologies.</p>
-              </div>
-              <div className="grid gap-2 text-center transition-transform duration-300 hover:scale-105">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent/20 text-accent-foreground">
-                    <Users className="h-8 w-8 text-primary" />
-                 </div>
-                <h3 className="text-xl font-bold">Vibrant Community</h3>
-                <p className="text-foreground/70">Connect with peers, mentors, and industry professionals in our exclusive online community.</p>
-              </div>
-              <div className="grid gap-2 text-center transition-transform duration-300 hover:scale-105">
-                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent/20 text-accent-foreground">
-                    <BrainCircuit className="h-8 w-8 text-primary" />
-                 </div>
-                <h3 className="text-xl font-bold">Real-World Projects</h3>
-                <p className="text-foreground/70">Build a professional portfolio by working on hands-on projects that solve real-world challenges.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-         <section className="w-full py-16 md:py-24">
-          <div className="container text-center">
-             <div className="max-w-2xl mx-auto">
-                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Ready to Build the Future?</h2>
-                <p className="mt-4 text-lg text-foreground/70">
-                    Join a community of forward-thinking designers and architects. Your journey starts here.
-                </p>
-                <div className="mt-8">
-                     <Button asChild size="lg" className="transition-transform duration-300 hover:scale-105">
-                        <Link href="/join">Become a Member Today</Link>
-                    </Button>
+            <div className="container px-4 md:px-6">
+                <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+                    <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-primary">Explore Aether with Your Aether ID</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {offerings.map(offering => (
+                        <Card key={offering.title} className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+                             <CardHeader className="items-center text-center">
+                                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 group-hover:rotate-12 transition-all duration-300">
+                                  <AetherIDBadge className="h-10 w-10" />
+                                </div>
+                                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
+                                  <offering.icon className="h-8 w-8" />
+                                </div>
+                                <CardTitle>{offering.title}</CardTitle>
+                             </CardHeader>
+                             <CardContent className="text-center">
+                                <CardDescription>{offering.description}</CardDescription>
+                                <Button asChild size="sm" className="mt-4" variant={offering.variant}>
+                                    <Link href={offering.href}>{offering.cta}</Link>
+                                </Button>
+                             </CardContent>
+                        </Card>
+                    ))}
                 </div>
             </div>
-          </div>
         </section>
+
+        {/* Events Section */}
+        <section id="events" className="w-full py-16 md:py-24 scroll-mt-16">
+            <div className="container px-4 md:px-6">
+                <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+                     <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-primary">Get Involved with Your Aether ID</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                     {events.map(event => (
+                        <Card key={event.title} className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+                            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                                <AetherIDBadge className="h-10 w-10 text-primary" />
+                            </div>
+                            <Image src={event.image} alt={event.title} width={600} height={400} className="object-cover w-full h-48" data-ai-hint={event.aiHint} />
+                            <CardHeader>
+                                <CardTitle>{event.title}</CardTitle>
+                                <CardDescription>{event.date}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-foreground/70 mb-4">{event.description}</p>
+                                <Button asChild variant={event.variant} className="w-full">
+                                    <Link href={event.href}>{event.cta}</Link>
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        {/* Newsletter Section */}
+        <section id="newsletter" className="w-full py-16 md:py-24 bg-gradient-to-r from-blue-900/10 via-purple-900/10 to-background">
+            <div className="container">
+                <div className="max-w-xl mx-auto text-center relative">
+                     <div className="absolute -top-16 left-1/2 -translate-x-1/2">
+                        <AetherIDBadge className="h-20 w-20 animate-bounce" />
+                    </div>
+                    <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Stay Ahead with Aether Insights</h2>
+                    <p className="mt-4 text-lg text-foreground/70">
+                        Discover design trends, case studies, and tips tailored to you. Use your Aether ID to subscribe, or get one in seconds.
+                    </p>
+                    <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <Input type="email" placeholder="Enter your email" className="max-w-sm" />
+                        <Button size="lg" className="transition-transform duration-300 hover:scale-105 w-full sm:w-auto">Subscribe</Button>
+                    </div>
+                     <p className="text-sm mt-4 text-foreground/60">No Aether ID? <Link href="/join" className="underline hover:text-primary">Get one now</Link>.</p>
+                </div>
+            </div>
+        </section>
+
+         {/* Social Links Section */}
+        <section className="w-full py-16 md:py-24">
+            <div className="container text-center">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary mb-4">Join Our Community</h2>
+                <p className="mx-auto max-w-[700px] text-lg text-foreground/70 mb-12">
+                   Connect with us on social platforms. Use your Aether ID for exclusive channels on Discord, Telegram, and WhatsApp.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8 max-w-4xl mx-auto">
+                    {socials.map(social => (
+                        <div key={social.name} className="group flex flex-col items-center space-y-2">
+                             <a href={social.href} target="_blank" rel="noopener noreferrer" className="relative">
+                                <social.icon className={`h-10 w-10 transition-colors duration-300 ${social.colorClass}`} />
+                                {social.premium && (
+                                     <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 group-hover:animate-bounce transition-opacity duration-300">
+                                        <AetherIDBadge className="h-6 w-6"/>
+                                    </div>
+                                )}
+                            </a>
+                            <p className="text-sm font-medium">{social.name}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
       </main>
     </div>
   );
 }
+
+const offerings = [
+  {
+    title: "Aether School",
+    description: "Learn computational design, sustainable architecture, and AI-driven creativity. Your Aether ID gives you full access to expert-led courses.",
+    cta: "Learn with Aether ID",
+    href: "/programs",
+    icon: Building,
+    variant: "default" as const,
+  },
+  {
+    title: "Community",
+    description: "Connect with global designers on Discord, Telegram, and more. Use your Aether ID to join projects and share ideas.",
+    cta: "Connect with Aether ID",
+    href: "/join",
+    icon: Users,
+    variant: "secondary" as const,
+  },
+  {
+    title: "Challenges",
+    description: "Solve real-world design problems, from urban planning to eco-materials. Your Aether ID opens the door to mentorship and rewards.",
+    cta: "Join Challenges with Aether ID",
+    href: "#events",
+    icon: Zap,
+    variant: "ghost" as const,
+  },
+  {
+    title: "Insights",
+    description: "Get curated trends and tips with Aether Insights. Sign up with your Aether ID for personalized updates.",
+    cta: "Subscribe with Aether ID",
+    href: "#newsletter",
+    icon: LandPlot,
+    variant: "default" as const,
+  },
+];
+
+const events = [
+    {
+        title: "Urban Futures Challenge",
+        date: "Starts October 15, 2025",
+        description: "Design a sustainable city block with AI tools. Aether ID required. Prize: Expert mentorship.",
+        image: "https://picsum.photos/600/400?grayscale",
+        aiHint: "sustainable city AI",
+        href: "/join",
+        cta: "Join with Aether ID",
+        variant: "secondary" as const,
+    },
+    {
+        title: "Material Innovation Sprint",
+        date: "Starts November 1, 2025",
+        description: "Propose eco-friendly materials. Access with Aether ID.",
+        image: "https://picsum.photos/600/401?grayscale",
+        aiHint: "eco friendly materials",
+        href: "/join",
+        cta: "Join with Aether ID",
+        variant: "secondary" as const,
+    },
+    {
+        title: "World Architecture Day Launch",
+        date: "October 6, 2025",
+        description: "Join our virtual showcase featuring student projects, live talks, and awards. Use your Aether ID to RSVP.",
+        image: "https://picsum.photos/600/402?grayscale",
+        aiHint: "virtual showcase architecture",
+        href: "/join",
+        cta: "RSVP with Aether ID",
+        variant: "default" as const,
+    }
+]
+
+const socials = [
+  { name: "Instagram", icon: Instagram, href: "#", colorClass: "hover:text-pink-500", premium: false },
+  { name: "X", icon: X, href: "#", colorClass: "hover:text-blue-400", premium: false },
+  { name: "LinkedIn", icon: Linkedin, href: "#", colorClass: "hover:text-gray-400", premium: false },
+  { name: "Discord", icon: Disc, href: "#", colorClass: "hover:text-purple-500", premium: true },
+  { name: "Telegram", icon: Send, href: "#", colorClass: "hover:text-blue-500", premium: true },
+  { name: "WhatsApp", icon: MessageSquare, href: "#", colorClass: "hover:text-gray-400", premium: true },
+];
