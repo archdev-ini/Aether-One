@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X, Building, Users, HelpCircle, Briefcase } from "lucide-react";
+import { Menu, X, Calendar, Info, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navLinks = [
-  { href: "/programs", label: "Programs", icon: Briefcase },
-  { href: "/about", label: "About", icon: Building },
+  { href: "/events", label: "Events", icon: Calendar },
+  { href: "/about", label: "About", icon: Info },
   { href: "/faq", label: "FAQ", icon: HelpCircle },
 ];
 
@@ -43,9 +44,7 @@ export function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end gap-4">
-          <Button asChild className="hidden sm:inline-flex transition-transform duration-300 hover:scale-105">
-            <Link href="/join">Join Aether</Link>
-          </Button>
+          <ThemeToggle />
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">
@@ -83,11 +82,6 @@ export function Header() {
                     </Link>
                   ))}
                 </nav>
-                <div className="mt-auto">
-                  <Button asChild size="lg" className="w-full">
-                    <Link href="/join" onClick={() => setIsMenuOpen(false)}>Join Aether</Link>
-                  </Button>
-                </div>
               </div>
             </SheetContent>
           </Sheet>
