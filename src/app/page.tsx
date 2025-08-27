@@ -13,7 +13,7 @@ export default function Home() {
           <div className="container px-4 md:px-6 z-10">
             <div className="max-w-4xl mx-auto text-center space-y-6">
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
-                Aether — The Creative Ecosystem for Architects & Designers
+                The Creative Ecosystem for Architects & Designers
               </h1>
               <p className="text-lg text-foreground/80 md:text-xl max-w-3xl mx-auto">
                 A global-facing, Africa-rooted learning community. Get your permanent Aether ID, access exclusive events, and join the network shaping the future of design.
