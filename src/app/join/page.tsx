@@ -1,8 +1,10 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
+import { createUser } from "@/actions/auth.actions";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 
 const formSchema = z.object({
@@ -28,6 +33,8 @@ const formSchema = z.object({
 
 export default function JoinPage() {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionMessage, setSubmissionMessage] = useState<{title: string, description: React.ReactNode} | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,20 +47,40 @@ export default function JoinPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast({
-      title: "Success! Check your email to activate your Aether ID.",
-      description: (
-        <p>
-          Didn&apos;t get the email?{" "}
-          <Link href="#" className="text-primary hover:underline">
-            Resend Link
-          </Link>
-        </p>
-      ),
-    });
-    form.reset();
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
+    setSubmissionMessage(null);
+    try {
+        const result = await createUser(values);
+        if (result.success) {
+            setSubmissionMessage({
+                title: "Success! Check your email to activate your Aether ID.",
+                description: (
+                    <p>
+                        We've sent a link to {values.email}. Didn't get it?{" "}
+                        <Link href="#" className="font-semibold text-primary hover:underline">
+                            Resend Link
+                        </Link>
+                    </p>
+                )
+            });
+            form.reset();
+        } else {
+             toast({
+                variant: "destructive",
+                title: "Something went wrong",
+                description: result.message || "There was a problem with your submission.",
+            });
+        }
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "An unexpected error occurred. Please try again.",
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
   }
 
   return (
@@ -67,6 +94,14 @@ export default function JoinPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
+                    {submissionMessage ? (
+                         <Alert>
+                            <AlertTitle>{submissionMessage.title}</AlertTitle>
+                            <AlertDescription>
+                                {submissionMessage.description}
+                            </AlertDescription>
+                        </Alert>
+                    ) : (
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -232,14 +267,16 @@ export default function JoinPage() {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" className="w-full transition-all hover:shadow-lg hover:shadow-primary/50 hover:scale-105" size="lg">Get My Aether ID</Button>
+                            <Button type="submit" disabled={isSubmitting} className="w-full transition-all hover:shadow-lg hover:shadow-primary/50 hover:scale-105" size="lg">
+                                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                Get My Aether ID
+                            </Button>
                         </form>
                     </Form>
+                    )}
                 </CardContent>
             </Card>
         </div>
     </div>
   );
 }
-
-    
