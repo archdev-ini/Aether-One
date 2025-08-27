@@ -4,11 +4,11 @@
 
 @layer base {
   :root {
-    --background: 240 10% 96%;
+    --background: 240 10% 98%;
     --foreground: 240 5% 15%;
-    --card: 240 10% 96%;
+    --card: 240 10% 98%;
     --card-foreground: 240 5% 15%;
-    --popover: 240 10% 96%;
+    --popover: 240 10% 98%;
     --popover-foreground: 240 5% 15%;
     --primary: 255 75% 55%;
     --primary-foreground: 0 0% 98%;
@@ -69,5 +69,13 @@
   ::selection {
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
+  }
+
+  .dark {
+    .blueprint-bg {
+      background-image:
+        linear-gradient(hsla(var(--foreground)/0.03) 1px, transparent 1px),
+        linear-gradient(90deg, hsla(var(--foreground)/0.03) 1px, transparent 1px);
+    }
   }
 }

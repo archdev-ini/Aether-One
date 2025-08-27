@@ -31,8 +31,19 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="w-full py-20 md:py-32">
-          <div className="container px-4 md:px-6 z-10">
+        <section
+          className="relative w-full py-20 md:py-32"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)),
+              linear-gradient(90deg, hsla(var(--border)/0.5) 1px, transparent 1px),
+              linear-gradient(hsla(var(--border)/0.5) 1px, transparent 1px)
+            `,
+            backgroundSize: '100%, 100%, 50px 50px, 50px 50px',
+          }}
+        >
+           <div className="absolute inset-0 bg-background/90 z-0"></div>
+          <div className="container px-4 md:px-6 z-10 relative">
             <div className="max-w-4xl mx-auto text-center space-y-6">
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
                 The Creative Ecosystem for Architects & Designers
