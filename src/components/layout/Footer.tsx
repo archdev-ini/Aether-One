@@ -1,6 +1,5 @@
 import { Logo } from "@/components/Logo";
 import Link from "next/link";
-import { AetherIDBadge } from "../AetherIDBadge";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -34,9 +33,9 @@ export function Footer() {
           
           {/* Legal */}
           <div className="flex flex-col items-center justify-center text-center">
-             <AetherIDBadge className="h-12 w-12 mb-4 text-primary" />
+             <Logo className="h-12 w-12 mb-4 text-primary" />
              <p className="text-sm">
-                © {new Date().getFullYear()} Aether Ecosystem. All rights reserved.
+                © 2025 Aether Ecosystem. All rights reserved.
              </p>
              <div className="text-sm mt-2">
                  <Link href="#" className="transition-colors hover:text-primary">Privacy Policy</Link>

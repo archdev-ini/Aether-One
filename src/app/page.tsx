@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { AetherIDBadge } from '@/components/AetherIDBadge';
 
 export default function Home() {
   return (
@@ -24,7 +23,6 @@ export default function Home() {
           </div>
           <div className="container px-4 md:px-6 z-10">
             <div className="max-w-3xl mx-auto space-y-6 flex flex-col items-center">
-              <AetherIDBadge className="w-24 h-24 text-primary animate-pulse" />
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-primary">
                 Your Aether ID: Unlock a World of Design
               </h1>
@@ -36,7 +34,7 @@ export default function Home() {
                   <Link href="/join">Get Your Aether ID</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="transition-transform duration-300 hover:scale-105 hover:bg-accent/50">
-                  <Link href="#about">Discover Aether <ArrowRight className="ml-2" /></Link>
+                  <Link href="#about">Discover Aether</Link>
                 </Button>
               </div>
             </div>
