@@ -4,7 +4,7 @@ import { AetherIDBadge } from "../AetherIDBadge";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/join", label: "Join Aether" },
+  { href: "/join", label: "Get Aether ID" },
   { href: "/programs", label: "Programs" },
   { href: "/about", label: "About" },
   { href: "/faq", label: "FAQ/Contact" },
@@ -34,7 +34,7 @@ export function Footer() {
           
           {/* Legal */}
           <div className="flex flex-col items-center justify-center text-center">
-             <Logo className="h-12 w-12 mb-4 text-primary" />
+             <AetherIDBadge className="h-12 w-12 mb-4 text-primary" />
              <p className="text-sm">
                 © {new Date().getFullYear()} Aether Ecosystem. All rights reserved.
              </p>
@@ -56,7 +56,7 @@ export function Footer() {
                 </li>
                 <li>
                     <Link href="/faq" className="text-sm transition-colors hover:text-primary font-semibold">
-                       Contact Us
+                       Contact Us with Aether ID
                     </Link>
                 </li>
             </ul>
