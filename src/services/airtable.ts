@@ -31,6 +31,13 @@ export const db = {
         return user || null;
     },
 
+    async findUserById(id: string): Promise<User | null> {
+        console.log(`[DB MOCK] Searching for user with ID: ${id}`);
+        const user = users.find((u) => u.AetherID === id);
+        console.log(user ? `[DB MOCK] User found.` : `[DB MOCK] User not found.`);
+        return user || null;
+    },
+
     async createUser(userData: Omit<User, 'CreatedAt' | 'ActivatedAt'>): Promise<User> {
         const existingUserIndex = users.findIndex(u => u.Email === userData.Email);
 
@@ -87,7 +94,4 @@ export const db = {
         users[userIndex].VerificationToken = token;
         users[userIndex].VerificationTokenExpires = expires;
 
-        console.log(`[DB MOCK] Token updated successfully.`);
-        return users[userIndex];
-    }
-};
+        console.log(
