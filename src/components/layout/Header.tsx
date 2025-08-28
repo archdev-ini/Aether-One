@@ -21,8 +21,9 @@ import { useRouter } from 'next/navigation';
 
 const navLinks = [
   { href: '/programs', label: 'Programs' },
-  { href: '/about', label: 'About' },
+  { href: '/knowledge', label: 'Knowledge' },
   { href: '/events', label: 'Events' },
+  { href: '/about', label: 'About' },
   { href: '/faq', label: 'FAQ' },
 ];
 
