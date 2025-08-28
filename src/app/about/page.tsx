@@ -1,30 +1,41 @@
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Eye, Target, Heart } from "lucide-react";
+import { Eye, Target, Heart, Leaf, Handshake, Globe, Search, Lightbulb } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-    title: "About the Ecosystem",
-    description: "Learn about Aether's mission, vision, and the values that drive our community of designers and architects."
+    title: "About Aether",
+    description: "Learn about Aether's story, mission, vision, and the values that drive our community of designers and architects."
 };
 
 const values = [
     {
-        icon: Target,
-        title: "Our Mission",
-        description: "To democratize design education, making cutting-edge knowledge and tools accessible to everyone, everywhere."
+        icon: Leaf,
+        title: "Sustainability",
+        description: "Designing with respect for people and planet."
     },
     {
-        icon: Eye,
-        title: "Our Vision",
-        description: "To cultivate a global community of innovators who are shaping the future of the built and digital worlds through collaboration and creativity."
+        icon: Handshake,
+        title: "Collaboration",
+        description: "Co-creating across borders and disciplines."
     },
     {
-        icon: Heart,
-        title: "Our Values",
-        description: "We are driven by curiosity, committed to excellence, and dedicated to fostering an inclusive and supportive learning environment."
+        icon: Globe,
+        title: "Global Reach, Local Empowerment",
+        description: "Building globally, empowering communities locally."
+    },
+    {
+        icon: Search,
+        title: "Transparency",
+        description: "Openness in vision, action, and growth."
+    },
+     {
+        icon: Lightbulb,
+        title: "Innovation",
+        description: "Pushing the boundaries of design and technology."
     }
 ];
 
@@ -44,49 +55,29 @@ export default function AboutPage() {
               </div>
               <div className="container z-10">
                 <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl text-primary">
-                    Shaping the Future of Digital Design
+                    Building the Future of Architecture, Together.
                 </h1>
                 <p className="mx-auto max-w-[700px] text-foreground/80 md:text-xl mt-4">
-                    Aether is more than a school; it's an ecosystem built on the belief that great design is born from community, curiosity, and a relentless pursuit of innovation.
+                    Aether is a global ecosystem for architects, designers, and visionaries—rooted in community, powered by collaboration, and inspired by innovation.
                 </p>
               </div>
             </section>
 
             <section className="w-full py-16 md:py-24">
                 <div className="container">
-                    <div className="grid gap-8 md:grid-cols-3">
-                        {values.map((value) => (
-                            <Card key={value.title} className="text-center p-6 transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-                                <CardHeader className="items-center">
-                                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
-                                        <value.icon className="h-8 w-8" />
-                                    </div>
-                                    <CardTitle className="text-2xl">{value.title}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-foreground/70">{value.description}</p>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            <section className="w-full py-16 md:py-24 bg-card">
-                <div className="container">
-                    <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-center">
+                     <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-center">
                         <div className="space-y-4">
-                            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">A Global Community of Creators</h2>
+                            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Our Story</h2>
                             <p className="text-lg text-foreground/70">
-                                The heart of Aether is our diverse and vibrant community. Members from around the world come together to share ideas, collaborate on projects, and support each other's growth. We host regular virtual meetups, design challenges, and portfolio reviews to keep our community connected and inspired.
+                                Aether began with a simple belief: architecture is more than buildings—it’s about people, culture, and the future we create together. What started as a student-led initiative has grown into a global platform connecting learners, practitioners, and creators.
                             </p>
-                             <Button asChild size="lg" className="mt-4 transition-transform duration-300 hover:scale-105">
-                                 <Link href="/join">Join Our Community</Link>
-                            </Button>
+                            <p className="text-lg text-foreground/70">
+                                We exist to empower the next generation of architects and designers with tools, knowledge, and opportunities that go beyond traditional education.
+                            </p>
                         </div>
-                        <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
+                        <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
                              <Image
-                                src="https://picsum.photos/600/600"
+                                src="https://picsum.photos/600/400"
                                 alt="Diverse group of people collaborating online"
                                 data-ai-hint="diverse people collaboration"
                                 fill
@@ -97,11 +88,62 @@ export default function AboutPage() {
                 </div>
             </section>
 
+             <section className="w-full py-16 md:py-24 bg-card">
+                <div className="container">
+                     <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-center">
+                         <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 md:order-2">
+                             <Image
+                                src="https://picsum.photos/600/401"
+                                alt="Abstract architectural rendering"
+                                data-ai-hint="abstract architecture"
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+                        <div className="space-y-4 md:order-1">
+                            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Our Vision</h2>
+                            <p className="text-lg text-foreground/70">
+                               Our vision is to redefine the future of architecture and design—one where learning is open, collaboration is borderless, and ideas are built into reality. We believe in:
+                            </p>
+                             <ul className="space-y-2 text-lg text-foreground/70 list-disc list-inside">
+                                <li>Access for all: Knowledge and opportunities should not be locked away.</li>
+                                <li>Community first: Change happens when people come together.</li>
+                                <li>Future-minded design: Sustainable, innovative, and culturally rooted.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
              <section className="w-full py-16 md:py-24">
                 <div className="container text-center">
-                    <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary mb-4">Meet Our Team</h2>
+                     <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary mb-4">Our Values</h2>
+                     <p className="mx-auto max-w-[700px] text-lg text-foreground/70 mb-12">
+                        The principles that guide our ecosystem and community.
+                    </p>
+                    <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-5">
+                        {values.map((value) => (
+                            <Card key={value.title} className="text-center p-6 transition-transform duration-300 hover:scale-105 hover:shadow-xl border-0 shadow-none">
+                                <CardHeader className="items-center p-0">
+                                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
+                                        <value.icon className="h-8 w-8" />
+                                    </div>
+                                    <CardTitle className="text-xl">{value.title}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-2">
+                                    <p className="text-foreground/70">{value.description}</p>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+             <section className="w-full py-16 md:py-24 bg-card">
+                <div className="container text-center">
+                    <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary mb-4">The Team</h2>
                     <p className="mx-auto max-w-[700px] text-lg text-foreground/70 mb-12">
-                        Our instructors and mentors are industry-leading professionals and passionate educators dedicated to your success.
+                        Behind Aether is a community of passionate creators, builders, and learners. Founded by Inioluwa Oladipupo, an architecture student and innovator, Aether continues to grow through the contributions of its members worldwide.
                     </p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                          {Array.from({ length: 4 }).map((_, i) => (
@@ -116,8 +158,12 @@ export default function AboutPage() {
                             </div>
                         ))}
                     </div>
+                     <Button asChild size="lg" className="mt-12 transition-transform duration-300 hover:scale-105">
+                        <Link href="/join">Join Our Community</Link>
+                    </Button>
                 </div>
             </section>
         </div>
     );
-}
+
+    
