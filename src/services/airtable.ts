@@ -94,4 +94,7 @@ export const db = {
         users[userIndex].VerificationToken = token;
         users[userIndex].VerificationTokenExpires = expires;
 
-        console.log(
+        console.log(`[DB MOCK] Token updated successfully for ${email}.`);
+        return users[userIndex];
+    },
+};
