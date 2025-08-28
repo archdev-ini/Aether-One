@@ -18,9 +18,9 @@ export default {
     extend: {
       fontFamily: {
         sans: ['var(--font-sans)', ...fontFamily.sans],
-        body: ['Satoshi', 'sans-serif'],
-        headline: ['Sora', 'sans-serif'],
-        logo: ['Satoshi', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+        headline: ['Inter', 'sans-serif'],
+        logo: ['Inter', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
