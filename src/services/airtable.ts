@@ -20,8 +20,20 @@ type User = {
     ActivatedAt?: Date | null;
 };
 
+type Rsvp = {
+    'Event Code': string,
+    'Full Name': string,
+    'Email': string,
+    'Aether ID'?: string,
+    'City + Country'?: string,
+    'Platform': string,
+    'Interest Notes'?: string,
+    'RSVP Timestamp': string,
+}
+
 // In-memory array to act as our database
 const users: User[] = [];
+const rsvps: Rsvp[] = [];
 
 export const db = {
     async findUserByEmail(email: string): Promise<User | null> {
@@ -96,5 +108,17 @@ export const db = {
 
         console.log(`[DB MOCK] Token updated successfully for ${email}.`);
         return users[userIndex];
+    },
+
+    async createRsvp(rsvpData: Rsvp): Promise<Rsvp> {
+        console.log(`[DB MOCK] Creating new RSVP for event: ${rsvpData['Event Code']}`);
+        rsvps.push(rsvpData);
+        return rsvpData;
+    },
+
+    async getRsvpCountForEvent(eventCode: string): Promise<number> {
+        const count = rsvps.filter(r => r['Event Code'] === eventCode).length;
+        console.log(`[DB MOCK] Found ${count} RSVPs for event ${eventCode}`);
+        return count;
     },
 };

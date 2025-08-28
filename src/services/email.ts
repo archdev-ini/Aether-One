@@ -15,6 +15,15 @@ type LoginEmailPayload = {
   loginLink: string;
 }
 
+type RsvpConfirmationPayload = {
+  to: string;
+  name: string;
+  eventName: string;
+  eventDate: Date;
+  eventPlatform: string;
+  eventLocation: string;
+}
+
 export async function sendVerificationEmail(payload: VerificationEmailPayload) {
   const { to, name, aetherId, verificationLink } = payload;
 
@@ -57,6 +66,46 @@ export async function sendLoginEmail(payload: LoginEmailPayload) {
   console.log(``);
   console.log(`This link will expire in 15 minutes.`);
   console.log(`If you didn’t request this, please ignore.`);
+  console.log("====================================");
+
+  return { success: true };
+}
+
+export async function sendRsvpConfirmationEmail(payload: RsvpConfirmationPayload) {
+  const { to, name, eventName, eventDate, eventPlatform, eventLocation } = payload;
+
+  const formattedDate = eventDate.toLocaleString(undefined, {
+    dateStyle: 'full',
+    timeStyle: 'short',
+  });
+
+  // Basic "Add to Calendar" link generator
+  const createCalendarLink = () => {
+    const startTime = eventDate.toISOString().replace(/-|:|\.\d\d\d/g, "");
+    const endTime = new Date(eventDate.getTime() + (60 * 60 * 1000)).toISOString().replace(/-|:|\.\d\d\d/g, ""); // Assume 1 hour duration
+    const details = `Join the Aether event: ${eventName} on ${eventPlatform}.`;
+    
+    return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventName)}&dates=${startTime}/${endTime}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(`${eventPlatform} (${eventLocation})`)}`;
+  }
+  
+  const calendarLink = createCalendarLink();
+
+  console.log("====================================");
+  console.log(" MOCK EMAIL: Sending RSVP Confirmation");
+  console.log("====================================");
+  console.log(`Recipient: ${to}`);
+  console.log(`Subject: You're confirmed for ${eventName} 🎉`);
+  console.log("--- Body ---");
+  console.log(`Hi ${name},`);
+  console.log(``);
+  console.log(`This email confirms your spot for ${eventName}. We're excited to see you there!`);
+  console.log(``);
+  console.log(`Event Details:`);
+  console.log(`- Date & Time: ${formattedDate}`);
+  console.log(`- Platform: ${eventPlatform} (${eventLocation})`);
+  console.log(``);
+  console.log(`[Add to Calendar] -> ${calendarLink}`);
+  console.log(``);
   console.log("====================================");
 
   return { success: true };

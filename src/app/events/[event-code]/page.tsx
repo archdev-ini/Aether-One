@@ -48,6 +48,8 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
     if (!event) {
         notFound();
     }
+    
+    const rsvpCount = await db.getRsvpCountForEvent(event.code);
 
     const formatEventDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString(undefined, {
@@ -164,6 +166,13 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                                    <div>
                                        <p className="font-semibold">Location</p>
                                        <p className="text-muted-foreground">{event.platform} ({event.location})</p>
+                                   </div>
+                               </div>
+                               <div className="flex items-center gap-3">
+                                   <Users className="h-5 w-5 text-primary" />
+                                   <div>
+                                       <p className="font-semibold">Attending</p>
+                                       <p className="text-muted-foreground">{rsvpCount} people</p>
                                    </div>
                                </div>
                                 <Separator className="my-4"/>

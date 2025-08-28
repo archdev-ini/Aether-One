@@ -2,6 +2,9 @@
 "use server";
 
 import { z } from "zod";
+import { db } from "@/services/airtable";
+import { sendRsvpConfirmationEmail } from "@/services/email";
+import { mockEvents } from "@/app/events/data";
 
 export const rsvpFormSchema = z.object({
   eventCode: z.string(),
@@ -31,14 +34,24 @@ export async function submitRsvp(values: z.infer<typeof rsvpFormSchema>) {
         'RSVP Timestamp': new Date().toISOString(),
     };
 
+    await db.createRsvp(rsvpRecord);
+
     console.log("Record to be saved to 'Events_RSVP' table:");
     console.log(rsvpRecord);
     console.log("====================================");
-    
-    // Example of what the Airtable API call might look like:
-    // await airtable.base('YOUR_BASE_ID').table('Events_RSVP').create([
-    //   { fields: rsvpRecord }
-    // ]);
+
+    const event = mockEvents.find(e => e.code === values.eventCode);
+
+    if (event) {
+        await sendRsvpConfirmationEmail({
+            to: values.email,
+            name: values.fullName,
+            eventName: event.title,
+            eventDate: new Date(event.date),
+            eventPlatform: event.platform,
+            eventLocation: event.location,
+        });
+    }
 
     return { success: true, message: "Your spot has been reserved!" };
 }
