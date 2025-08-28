@@ -29,6 +29,12 @@ type RsvpPayload = {
     'Notes'?: string,
 }
 
+type AboutContent = {
+    story: string;
+    vision: string;
+}
+
+
 if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID) {
     console.warn("Airtable API Key or Base ID is not set. Using mock data.");
 }
@@ -319,5 +325,24 @@ export const db = {
         if (!base) return [];
         const records = await fetchAllRecords<FieldSet>('tblS2uYs8YwWEphLP');
         return records.map(mapRecordToUpdate);
+    },
+
+    // ABOUT PAGE FUNCTIONS
+    async getAboutPageContent(): Promise<AboutContent | null> {
+        if (!base) return { story: 'Our story is just beginning...', vision: 'Our vision is to build a vibrant community.' }; // Provide fallback content
+        try {
+            const records = await base('tblrtY650XWDhY4Hm').select({ maxRecords: 1 }).firstPage();
+            if (records.length > 0) {
+                const fields = records[0].fields;
+                return {
+                    story: fields.fld8tkPZa5JGDB0k8 as string || '',
+                    vision: fields.fldj8CE7Q0oieunBS as string || '',
+                };
+            }
+            return null;
+        } catch (error) {
+            console.error(`[Airtable] Error fetching About page content:`, error);
+            return { story: 'Error loading story.', vision: 'Error loading vision.' };
+        }
     }
 };

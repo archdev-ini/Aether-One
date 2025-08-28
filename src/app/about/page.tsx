@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { db } from "@/services/airtable";
 
 export const metadata: Metadata = {
     title: "About Aether",
@@ -39,7 +40,9 @@ const values = [
     }
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+    const aboutContent = await db.getAboutPageContent();
+
     return (
         <div className="flex flex-col">
             <section className="relative w-full py-20 md:py-32 lg:py-40 flex items-center justify-center text-center bg-card">
@@ -68,12 +71,11 @@ export default function AboutPage() {
                      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-center">
                         <div className="space-y-4">
                             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Our Story</h2>
-                            <p className="text-lg text-foreground/70">
-                                Aether began with a simple belief: architecture is more than buildings—it’s about people, culture, and the future we create together. What started as a student-led initiative has grown into a global platform connecting learners, practitioners, and creators.
-                            </p>
-                            <p className="text-lg text-foreground/70">
-                                We exist to empower the next generation of architects and designers with tools, knowledge, and opportunities that go beyond traditional education.
-                            </p>
+                            <div className="text-lg text-foreground/70 space-y-4 whitespace-pre-wrap">
+                                {aboutContent?.story.split('\n\n').map((paragraph, index) => (
+                                    <p key={index}>{paragraph}</p>
+                                ))}
+                            </div>
                         </div>
                         <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
                              <Image
@@ -102,14 +104,11 @@ export default function AboutPage() {
                         </div>
                         <div className="space-y-4 md:order-1">
                             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Our Vision</h2>
-                            <p className="text-lg text-foreground/70">
-                               Our vision is to redefine the future of architecture and design—one where learning is open, collaboration is borderless, and ideas are built into reality. We believe in:
-                            </p>
-                             <ul className="space-y-2 text-lg text-foreground/70 list-disc list-inside">
-                                <li>Access for all: Knowledge and opportunities should not be locked away.</li>
-                                <li>Community first: Change happens when people come together.</li>
-                                <li>Future-minded design: Sustainable, innovative, and culturally rooted.</li>
-                            </ul>
+                            <div className="text-lg text-foreground/70 space-y-4 whitespace-pre-wrap">
+                               {aboutContent?.vision.split('\n\n').map((paragraph, index) => (
+                                    <p key={index}>{paragraph}</p>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -165,5 +164,4 @@ export default function AboutPage() {
             </section>
         </div>
     );
-
-    
+}
