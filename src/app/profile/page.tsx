@@ -12,7 +12,7 @@ export default function ProfilePage() {
     const id = cookieStore.get('aether_user_id')?.value;
 
     if (!name || !id) {
-        redirect('/login');
+        redirect('/join');
     }
 
     return (
@@ -28,14 +28,14 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="text-center">
                     <p className="text-muted-foreground mb-6">
-                        Welcome to the Aether ecosystem. Your journey starts now.
+                        🎉 Your Aether ID is now active! Welcome to the ecosystem.
                     </p>
                     <div className="flex justify-center gap-4">
                         <Button asChild>
                             <Link href="/programs">Explore Programs</Link>
                         </Button>
                          <Button asChild variant="outline">
-                            <Link href="/events">View Events</Link>
+                            <Link href="/">Back to Home</Link>
                         </Button>
                     </div>
                 </CardContent>

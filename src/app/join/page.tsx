@@ -57,7 +57,7 @@ export default function JoinPage() {
                 title: "Success! Check your email to activate your Aether ID.",
                 description: (
                     <p>
-                        We've sent a link to {values.email}. Didn't get it?{" "}
+                        We've sent a verification link to {values.email}. Didn't get it?{" "}
                         <Link href="#" className="font-semibold text-primary hover:underline">
                             Resend Link
                         </Link>
@@ -157,10 +157,10 @@ export default function JoinPage() {
                                                 </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="under-18">Under 18</SelectItem>
-                                                    <SelectItem value="18-24">18–24</SelectItem>
-                                                    <SelectItem value="25-34">25–34</SelectItem>
-                                                    <SelectItem value="35-44">35–44</SelectItem>
+                                                    <SelectItem value="Under 18">Under 18</SelectItem>
+                                                    <SelectItem value="18–24">18–24</SelectItem>
+                                                    <SelectItem value="25–34">25–34</SelectItem>
+                                                    <SelectItem value="35–44">35–44</SelectItem>
                                                     <SelectItem value="45+">45+</SelectItem>
                                                 </SelectContent>
                                             </Select>
@@ -181,12 +181,12 @@ export default function JoinPage() {
                                                 </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="student">Student</SelectItem>
-                                                    <SelectItem value="architect">Architect</SelectItem>
-                                                    <SelectItem value="designer">Designer</SelectItem>
-                                                    <SelectItem value="engineer">Engineer</SelectItem>
-                                                    <SelectItem value="developer">Developer</SelectItem>
-                                                    <SelectItem value="other">Other</SelectItem>
+                                                    <SelectItem value="Student">Student</SelectItem>
+                                                    <SelectItem value="Architect">Architect</SelectItem>
+                                                    <SelectItem value="Designer">Designer</SelectItem>
+                                                    <SelectItem value="Engineer">Engineer</SelectItem>
+                                                    <SelectItem value="Developer">Developer</SelectItem>
+                                                    <SelectItem value="Other">Other</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -206,12 +206,12 @@ export default function JoinPage() {
                                                 </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="computational-design">Computational Design</SelectItem>
-                                                    <SelectItem value="sustainable-architecture">Sustainable Architecture</SelectItem>
-                                                    <SelectItem value="ai-in-design">AI in Design</SelectItem>
-                                                    <SelectItem value="community-collaboration">Community Collaboration</SelectItem>
-                                                    <SelectItem value="challenges">Challenges</SelectItem>
-                                                    <SelectItem value="other">Other</SelectItem>
+                                                    <SelectItem value="Computational Design">Computational Design</SelectItem>
+                                                    <SelectItem value="Sustainable Architecture">Sustainable Architecture</SelectItem>
+                                                    <SelectItem value="AI in Design">AI in Design</SelectItem>
+                                                    <SelectItem value="Community Collaboration">Community Collaboration</SelectItem>
+                                                    <SelectItem value="Challenges">Challenges</SelectItem>
+                                                    <SelectItem value="Other">Other</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -231,12 +231,12 @@ export default function JoinPage() {
                                                 </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="discord">Discord</SelectItem>
-                                                    <SelectItem value="telegram">Telegram</SelectItem>
-                                                    <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                                                    <SelectItem value="x">X</SelectItem>
-                                                    <SelectItem value="instagram">Instagram</SelectItem>
-                                                    <SelectItem value="linkedin">LinkedIn</SelectItem>
+                                                    <SelectItem value="Discord">Discord</SelectItem>
+                                                    <SelectItem value="Telegram">Telegram</SelectItem>
+                                                    <SelectItem value="WhatsApp">WhatsApp</SelectItem>
+                                                    <SelectItem value="X">X</SelectItem>
+                                                    <SelectItem value="Instagram">Instagram</SelectItem>
+                                                    <SelectItem value="LinkedIn">LinkedIn</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />

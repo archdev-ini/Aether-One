@@ -35,19 +35,19 @@ export async function createUser(values: z.infer<typeof formSchema>) {
         const verificationTokenExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
 
         await db.createUser({
-            fullName: validatedData.fullName,
-            email: validatedData.email,
-            cityCountry: validatedData.location,
-            ageRange: validatedData.ageRange,
-            currentRole: validatedData.currentRole,
-            mainInterest: validatedData.mainInterest,
-            preferredCommunityPlatform: validatedData.preferredPlatform,
-            socialHandle: validatedData.socialHandle,
-            goals: validatedData.goals,
-            aetherId,
-            verificationToken,
-            verificationTokenExpires,
-            verified: false,
+            FullName: validatedData.fullName,
+            Email: validatedData.email,
+            CityCountry: validatedData.location,
+            AgeRange: validatedData.ageRange,
+            CurrentRole: validatedData.currentRole,
+            MainInterest: validatedData.mainInterest,
+            PreferredCommunityPlatform: validatedData.preferredPlatform,
+            SocialHandle: validatedData.socialHandle,
+            Goals: validatedData.goals,
+            AetherID: aetherId,
+            VerificationToken: verificationToken,
+            VerificationTokenExpires: verificationTokenExpires,
+            IsActivated: false,
         });
 
         const verificationLink = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify?token=${verificationToken}`;
@@ -83,13 +83,13 @@ export async function verifyTokenAndLogin(token: string) {
         }
 
         // Set cookies for the session
-        cookies().set('aether_user_id', user.aetherId, {
+        cookies().set('aether_user_id', user.AetherID, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             maxAge: 60 * 60 * 24 * 7, // One week
             path: '/',
         });
-        cookies().set('aether_user_name', user.fullName, {
+        cookies().set('aether_user_name', user.FullName, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             maxAge: 60 * 60 * 24 * 7, // One week

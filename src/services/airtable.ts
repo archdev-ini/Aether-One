@@ -3,19 +3,21 @@
 // In a real application, you would replace this with a connection to a real database like Airtable, Firebase, or PostgreSQL.
 
 type User = {
-    fullName: string;
-    email: string;
-    cityCountry: string;
-    ageRange: string;
-    currentRole: string;
-    mainInterest: string;
-    preferredCommunityPlatform: string;
-    socialHandle?: string;
-    goals?: string;
-    aetherId: string;
-    verificationToken: string;
-    verificationTokenExpires: Date;
-    verified: boolean;
+    AetherID: string;
+    FullName: string;
+    Email: string;
+    CityCountry: string;
+    AgeRange: string;
+    CurrentRole: string;
+    MainInterest: string;
+    PreferredCommunityPlatform: string;
+    SocialHandle?: string;
+    Goals?: string;
+    IsActivated: boolean;
+    VerificationToken: string;
+    VerificationTokenExpires: Date;
+    CreatedAt?: Date;
+    ActivatedAt?: Date | null;
 };
 
 // In-memory array to act as our database
@@ -24,29 +26,28 @@ const users: User[] = [];
 export const db = {
     async findUserByEmail(email: string): Promise<User | null> {
         console.log(`[DB MOCK] Searching for user with email: ${email}`);
-        const user = users.find((u) => u.email === email);
+        const user = users.find((u) => u.Email === email);
         console.log(user ? `[DB MOCK] User found.` : `[DB MOCK] User not found.`);
         return user || null;
     },
 
-    async createUser(userData: Omit<User, 'createdAt' | 'activatedAt'>): Promise<User> {
-        const existingUserIndex = users.findIndex(u => u.email === userData.email);
+    async createUser(userData: Omit<User, 'CreatedAt' | 'ActivatedAt'>): Promise<User> {
+        const existingUserIndex = users.findIndex(u => u.Email === userData.Email);
 
         const userRecord: User = {
             ...userData,
-            // In a real DB, these would be handled by the DB.
-            // createdAt: new Date(), 
-            // activatedAt: null,
+            CreatedAt: new Date(), 
+            ActivatedAt: null,
         };
 
-        if (existingUserIndex !== -1) {
+        if (existingUserIndex !== -1 && !users[existingUserIndex].IsActivated) {
             // Update existing unverified user
-            console.log(`[DB MOCK] Updating existing user: ${userData.email}`);
+            console.log(`[DB MOCK] Updating existing user: ${userData.Email}`);
             users[existingUserIndex] = { ...users[existingUserIndex], ...userRecord };
             return users[existingUserIndex];
         } else {
             // Create new user
-            console.log(`[DB MOCK] Creating new user: ${userData.email} with Aether ID: ${userData.aetherId}`);
+            console.log(`[DB MOCK] Creating new user: ${userData.Email} with Aether ID: ${userData.AetherID}`);
             users.push(userRecord);
             return userRecord;
         }
@@ -56,8 +57,8 @@ export const db = {
         console.log(`[DB MOCK] Attempting to verify token: ${token}`);
         const userIndex = users.findIndex(
             (u) =>
-                u.verificationToken === token &&
-                u.verificationTokenExpires > new Date()
+                u.VerificationToken === token &&
+                u.VerificationTokenExpires > new Date()
         );
 
         if (userIndex === -1) {
@@ -66,12 +67,11 @@ export const db = {
         }
 
         const user = users[userIndex];
-        user.verified = true;
-        // In a real DB, you'd set activatedAt here.
-        // user.activatedAt = new Date();
-        user.verificationToken = ''; // Invalidate the token after use
+        user.IsActivated = true;
+        user.ActivatedAt = new Date();
+        user.VerificationToken = ''; // Invalidate the token after use
         
-        console.log(`[DB MOCK] User ${user.email} verified successfully.`);
+        console.log(`[DB MOCK] User ${user.Email} verified successfully.`);
         return user;
     },
 };
