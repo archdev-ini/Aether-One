@@ -33,10 +33,11 @@ type User = {
 
 interface RsvpDialogProps {
   eventTitle: string;
+  eventCode: string;
   user: User | null;
 }
 
-export function RsvpDialog({ eventTitle, user }: RsvpDialogProps) {
+export function RsvpDialog({ eventTitle, eventCode, user }: RsvpDialogProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -44,6 +45,7 @@ export function RsvpDialog({ eventTitle, user }: RsvpDialogProps) {
   const form = useForm<z.infer<typeof rsvpFormSchema>>({
     resolver: zodResolver(rsvpFormSchema),
     defaultValues: {
+      eventCode: eventCode,
       fullName: user?.FullName || "",
       email: user?.Email || "",
       aetherId: user?.AetherID || "",

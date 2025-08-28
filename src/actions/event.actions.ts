@@ -4,6 +4,7 @@
 import { z } from "zod";
 
 export const rsvpFormSchema = z.object({
+  eventCode: z.string(),
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   aetherId: z.string().optional(),
@@ -14,16 +15,30 @@ export const rsvpFormSchema = z.object({
 
 export async function submitRsvp(values: z.infer<typeof rsvpFormSchema>) {
     console.log("====================================");
-    console.log(" MOCK RSVP SUBMISSION               ");
-    console.log("====================================");
-    console.log("Received RSVP Form Data:");
-    console.log(values);
-    console.log("====================================");
-    console.log("In a real application, this data would be saved to a database (e.g., a new 'RSVPs' table in Airtable) and linked to the member and event records.");
+    console.log(" MOCK RSVP SUBMISSION TO AIRTABLE   ");
     console.log("====================================");
     
-    // Here you would add your database logic, e.g.:
-    // await db.createRsvp(values);
+    // In a real application, you would use the Airtable API here
+    // to create a new record in your 'Events_RSVP' table.
+    const rsvpRecord = {
+        'Event Code': values.eventCode,
+        'Full Name': values.fullName,
+        'Email': values.email,
+        'Aether ID': values.aetherId,
+        'City + Country': values.cityCountry,
+        'Platform': values.preferredPlatform,
+        'Interest Notes': values.interest,
+        'RSVP Timestamp': new Date().toISOString(),
+    };
+
+    console.log("Record to be saved to 'Events_RSVP' table:");
+    console.log(rsvpRecord);
+    console.log("====================================");
+    
+    // Example of what the Airtable API call might look like:
+    // await airtable.base('YOUR_BASE_ID').table('Events_RSVP').create([
+    //   { fields: rsvpRecord }
+    // ]);
 
     return { success: true, message: "Your spot has been reserved!" };
 }

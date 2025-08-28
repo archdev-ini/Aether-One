@@ -141,7 +141,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                     <aside className="lg:col-span-1">
                         <Card className="sticky top-24">
                             <CardHeader>
-                                <RsvpDialog eventTitle={event.title} user={user} />
+                                <RsvpDialog eventTitle={event.title} eventCode={event.code} user={user} />
                                 <p className="text-center text-sm text-muted-foreground mt-2">Secure your spot!</p>
                             </CardHeader>
                             <CardContent className="space-y-4 text-sm">
