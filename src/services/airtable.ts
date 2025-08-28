@@ -92,36 +92,36 @@ function mapRecordToUser(record: Record<FieldSet>): User {
 function mapRecordToEvent(record: Record<FieldSet>): Event {
     const fields = record.fields;
     let speakers: Event['speakers'] = [];
-    if (fields.Speakers) {
+    if (fields.fld7qYoCXteCIAM32) { // Speakers
         try {
-            speakers = JSON.parse(fields.Speakers as string);
+            speakers = JSON.parse(fields.fld7qYoCXteCIAM32 as string);
         } catch(e) {
-            console.error("Failed to parse speakers for event " + fields.Code, e)
+            console.error("Failed to parse speakers for event " + fields.fldmtn2xFhtijck4H, e)
         }
     }
 
     let agenda: Event['agenda'] = [];
-     if (fields.Agenda) {
+     if (fields.Agenda) { // No ID provided for Agenda, keeping original logic
         try {
             agenda = JSON.parse(fields.Agenda as string);
         } catch(e) {
-            console.error("Failed to parse agenda for event " + fields.Code, e)
+            console.error("Failed to parse agenda for event " + fields.fldmtn2xFhtijck4H, e)
         }
     }
 
 
     return {
-        code: fields.Code as string,
-        title: fields.Title as string,
-        date: fields.Date as string,
-        type: fields.Type as Event['type'],
-        focus: fields.Focus as Event['focus'],
-        description: fields.Description as string,
-        image: fields.Image as string,
-        aiHint: fields.AI_Hint as string,
-        platform: fields.Platform as string,
-        location: fields.Location as string,
-        longDescription: fields['Long Description'] as string,
+        code: fields.fldmtn2xFhtijck4H as string, // Shortcode
+        title: fields.fld1w8i3kvk81KTN1 as string, // Event Name
+        date: fields.fldtOlaXw6TXiftBp as string, // Date
+        type: fields.fldrIhDKMTz05NbjW as Event['type'], // Event Type
+        focus: "General", // No focus field provided in schema, defaulting
+        description: (fields.fldeUgXSaYspo7nj6 as string)?.substring(0, 150) + '...' || '', // Description (truncated for card)
+        image: "https://picsum.photos/800/600", // No image field in schema, using placeholder
+        aiHint: "event placeholder", // No AI hint in schema
+        platform: "Online", // No platform field in schema, defaulting
+        location: "Global", // No location field in schema, defaulting
+        longDescription: fields.fldeUgXSaYspo7nj6 as string, // Description
         speakers,
         agenda,
     };
@@ -218,8 +218,6 @@ export const db = {
                         'fld1xxrWwFQ3B3Azn': userData.SocialHandle,
                         'fldK7jPkvMehvA6XX': userData.Goals,
                         'fldZmHeRYwkkqrsOG': 'Pending',
-                        // NOTE: You will need to add fields in Airtable for token and expiry.
-                        // For now, we are using Auth Link, but it's not ideal for expiry.
                         'fldEhutDpQHkfxRqf': userData.VerificationToken
                     }
                 }
@@ -234,8 +232,6 @@ export const db = {
    async verifyUserByToken(token: string): Promise<User | null> {
         if (!base) return null;
         try {
-             // NOTE: This logic needs to be adapted. Airtable doesn't support token expiry checks in formulas easily.
-             // This lookup should be done against a temporary token field.
             const records = await base('tbl2Q9DdVCmKFKHnt').select({
                 filterByFormula: `{fldEhutDpQHkfxRqf} = "${token}"`,
                 maxRecords: 1
@@ -301,15 +297,15 @@ export const db = {
 
     async getEvents(): Promise<Event[]> {
         if (!base) return [];
-        const records = await fetchAllRecords<FieldSet>('Events');
+        const records = await fetchAllRecords<FieldSet>('tblDEVT8wrX6U35gk');
         return records.map(mapRecordToEvent);
     },
 
     async getEventByCode(code: string): Promise<Event | null> {
         if (!base) return null;
         try {
-            const records = await base('Events').select({
-                filterByFormula: `{Code} = "${code}"`,
+            const records = await base('tblDEVT8wrX6U35gk').select({
+                filterByFormula: `{fldmtn2xFhtijck4H} = "${code}"`,
                 maxRecords: 1
             }).firstPage();
 
