@@ -3,6 +3,7 @@ import { BookOpen, ToyBrick, Users } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UpdatesFeed } from '@/components/UpdatesFeed';
 
 const events = [
   {
@@ -54,7 +55,7 @@ export default function Home() {
                   <Link href="/join">Create Your Aether ID</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <Link href="#events">View Events</Link>
+                  <Link href="/events">View Events</Link>
                 </Button>
               </div>
             </div>
@@ -90,8 +91,27 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Updates Feed Section */}
+        <section className="w-full py-16 md:py-24">
+            <div className="container">
+                <div className="max-w-2xl mx-auto text-center space-y-4 mb-12">
+                    <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Stay Updated with Aether</h2>
+                    <p className="text-lg text-foreground/70">
+                        Explore the latest news, events, and opportunities from the ecosystem.
+                    </p>
+                </div>
+                <UpdatesFeed />
+                 <div className="text-center mt-12">
+                    <Button asChild size="lg">
+                        <Link href="#">Subscribe on Substack</Link>
+                    </Button>
+                </div>
+            </div>
+        </section>
+
+
         {/* Events Section */}
-        <section id="events" className="w-full py-16 md:py-24 scroll-mt-16">
+        <section id="events" className="w-full py-16 md:py-24 scroll-mt-16 bg-card">
           <div className="container px-4 md:px-6">
             <div className="max-w-4xl mx-auto">
               <div className="text-center space-y-4 mb-12">
