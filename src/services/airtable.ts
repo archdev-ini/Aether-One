@@ -24,8 +24,8 @@ type User = {
 };
 
 type RsvpPayload = {
-    'Event': string[],
-    'User'?: string[],
+    'fldejTBGYZV2zwMaH': string[], // Event
+    'fldkyFvyFq2p40Prz'?: string[], // User
     'Notes'?: string,
 }
 
@@ -143,11 +143,11 @@ function mapRecordToUpdate(record: Record<FieldSet>): UpdatePost {
     const fields = record.fields;
     return {
         id: record.id,
-        title: fields.Title as string,
-        date: fields.Date as string,
-        excerpt: fields.Excerpt as string,
-        category: fields.Category as UpdatePost['category'],
-        link: fields.Link as string,
+        title: fields.fldIVueHd8hESvI52 as string,
+        date: fields.fld5m3BQ4XYUfT461 as string,
+        excerpt: fields.fldrsdvOZSQK0ap8e as string,
+        category: fields.fldmVHdJeSB9ofu5H as UpdatePost['category'],
+        link: fields.fld3thST17lQ2aaEY as string,
     };
 }
 
@@ -317,7 +317,7 @@ export const db = {
     // UPDATES FEED FUNCTIONS
     async getUpdates(): Promise<UpdatePost[]> {
         if (!base) return [];
-        const records = await fetchAllRecords<FieldSet>('Updates');
+        const records = await fetchAllRecords<FieldSet>('tblS2uYs8YwWEphLP');
         return records.map(mapRecordToUpdate);
     }
 };

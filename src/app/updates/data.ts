@@ -4,6 +4,6 @@ export type UpdatePost = {
     title: string;
     date: string;
     excerpt: string;
-    category: 'Announcement' | 'Event' | 'Opportunity';
+    category: 'Update' | 'Opportunity' | 'Event' | 'Release';
     link: string;
 };
