@@ -96,58 +96,6 @@ export default function Home() {
             </div>
         </section>
 
-
-        {/* Events Section */}
-        {featuredEvent && (
-        <section id="events" className="w-full py-16 md:py-24 scroll-mt-16 bg-card">
-          <div className="container px-4 md:px-6">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center space-y-4 mb-12">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Pre-launch Events Are Here</h2>
-                <p className="text-lg text-foreground/70">
-                  Join exclusive workshops and Q&As with industry leaders throughout October and November. Your Aether ID is your access pass.
-                </p>
-              </div>
-
-                <Card key={featuredEvent.code} className="overflow-hidden">
-                  <CardHeader>
-                    <CardTitle className="text-2xl sm:text-3xl">{featuredEvent.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6 text-foreground/80">
-                    <p>{featuredEvent.longDescription}</p>
-                    
-                    {featuredEvent.whatToExpect && (
-                    <div>
-                      <h4 className="font-semibold text-lg text-foreground mb-2">What to Expect:</h4>
-                      <ul className="list-disc list-inside space-y-2">
-                        {featuredEvent.whatToExpect.map((item, i) => (
-                          <li key={i}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    )}
-
-                    {featuredEvent.whyAttend && (
-                    <div>
-                      <h4 className="font-semibold text-lg text-foreground mb-2">Why Attend?</h4>
-                      <div className="space-y-1">
-                        <p><strong>Students:</strong> {featuredEvent.whyAttend.students}</p>
-                        <p><strong>Professionals:</strong> {featuredEvent.whyAttend.professionals}</p>
-                      </div>
-                    </div>
-                    )}
-                     <Button asChild size="lg" className="w-full sm:w-auto">
-                      <Link href={`/events/${featuredEvent.code}`}>
-                        See Full Schedule <ArrowRight className="ml-2"/>
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-            </div>
-          </div>
-        </section>
-        )}
-
         {/* Final CTA Section */}
         <section className="w-full py-16 md:py-24 bg-primary/10">
           <div className="container">
