@@ -4,7 +4,6 @@
 import { z } from "zod";
 import { db } from "@/services/airtable";
 import { sendRsvpConfirmationEmail } from "@/services/email";
-import { mockEvents } from "@/app/events/data";
 
 // This is defined in RsvpDialog.tsx now to avoid the "use server" export error.
 type RsvpFormValues = {
@@ -41,7 +40,7 @@ export async function submitRsvp(values: RsvpFormValues) {
     console.log(rsvpRecord);
     console.log("====================================");
 
-    const event = mockEvents.find(e => e.code === values.eventCode);
+    const event = await db.getEventByCode(values.eventCode);
 
     if (event) {
         await sendRsvpConfirmationEmail({

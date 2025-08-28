@@ -1,5 +1,5 @@
 
-import { mockEvents } from "../data";
+
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
@@ -19,7 +19,7 @@ interface EventDetailPageProps {
 }
 
 export async function generateMetadata({ params }: EventDetailPageProps) {
-    const event = mockEvents.find(e => e.code === params['event-code']);
+    const event = await db.getEventByCode(params['event-code']);
 
     if (!event) {
         return {
@@ -43,7 +43,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
         user = await db.findUserById(userId);
     }
 
-    const event = mockEvents.find(e => e.code === params['event-code']);
+    const event = await db.getEventByCode(params['event-code']);
 
     if (!event) {
         notFound();
@@ -191,7 +191,8 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
 
 // This allows Next.js to pre-render all event pages at build time
 export async function generateStaticParams() {
-    return mockEvents.map((event) => ({
+    const events = await db.getEvents();
+    return events.map((event) => ({
         'event-code': event.code,
     }))
 }

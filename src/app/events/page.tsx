@@ -9,7 +9,9 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowRight, Calendar, Tag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { mockEvents } from "./data";
+import { db } from "@/services/airtable";
+import { Event } from "./data";
+import { useEffect } from "react";
 
 
 const eventTypes = ["All Types", "Workshop", "Talk", "Challenge", "Meetup"];
@@ -20,8 +22,17 @@ export default function EventsPage() {
     const [dateFilter, setDateFilter] = useState("upcoming");
     const [typeFilter, setTypeFilter] = useState("All Types");
     const [focusFilter, setFocusFilter] = useState("All Focuses");
+    const [events, setEvents] = useState<Event[]>([]);
 
-    const filteredEvents = mockEvents.filter(event => {
+    useEffect(() => {
+        const fetchEvents = async () => {
+            const allEvents = await db.getEvents();
+            setEvents(allEvents);
+        }
+        fetchEvents();
+    }, []);
+
+    const filteredEvents = events.filter(event => {
         const eventDate = new Date(event.date);
         const now = new Date();
 
@@ -141,3 +152,4 @@ export default function EventsPage() {
         </div>
     )
 }
+

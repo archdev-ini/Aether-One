@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
-import { mockResources, Resource } from "./data";
+import { useState, useMemo, useEffect } from "react";
+import { Resource } from "./data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,6 +11,7 @@ import { BookOpen, ExternalLink, Lock, Search } from "lucide-react";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { db } from "@/services/airtable";
 
 const categories = ["All Categories", "Architecture & Design", "Technology & Web3", "Community & Leadership", "Aether Insights"];
 const resourceTypes = ["All Types", "Article", "Video", "PDF", "Tool", "Course"];
@@ -19,9 +20,18 @@ export default function KnowledgePage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("All Categories");
     const [typeFilter, setTypeFilter] = useState("All Types");
+    const [resources, setResources] = useState<Resource[]>([]);
+
+    useEffect(() => {
+        const fetchResources = async () => {
+            const allResources = await db.getResources();
+            setResources(allResources);
+        }
+        fetchResources();
+    }, []);
 
     const filteredResources = useMemo(() => {
-        return mockResources.filter(resource => {
+        return resources.filter(resource => {
             const matchesCategory = categoryFilter === "All Categories" || resource.category === categoryFilter;
             const matchesType = typeFilter === "All Types" || resource.type === typeFilter;
             const matchesSearch = searchTerm === "" || 
@@ -31,7 +41,7 @@ export default function KnowledgePage() {
             
             return matchesCategory && matchesType && matchesSearch;
         }).sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
-    }, [searchTerm, categoryFilter, typeFilter]);
+    }, [resources, searchTerm, categoryFilter, typeFilter]);
 
     return (
         <div className="flex flex-col">

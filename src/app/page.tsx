@@ -5,11 +5,12 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { UpdatesFeed } from '@/components/UpdatesFeed';
-import { mockEvents } from './events/data';
+import { db } from '@/services/airtable';
 import { ArrowRight } from 'lucide-react';
 
-export default function Home() {
-  const upcomingEvents = mockEvents
+export default async function Home() {
+  const allEvents = await db.getEvents();
+  const upcomingEvents = allEvents
     .filter(event => new Date(event.date) > new Date())
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 

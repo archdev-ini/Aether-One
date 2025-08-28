@@ -1,11 +1,15 @@
 
-import { mockUpdates, UpdatePost } from "@/app/updates/data";
+'use client';
+
+import { UpdatePost } from "@/app/updates/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { db } from "@/services/airtable";
 
 const categoryStyles = {
     Announcement: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700/50",
@@ -24,8 +28,15 @@ function formatDate(dateString: string) {
 }
 
 export function UpdatesFeed() {
-    // In a real app, you would fetch this data from your RSS feed.
-    const posts = mockUpdates;
+    const [posts, setPosts] = useState<UpdatePost[]>([]);
+
+    useEffect(() => {
+        const fetchUpdates = async () => {
+            const allUpdates = await db.getUpdates();
+            setPosts(allUpdates);
+        }
+        fetchUpdates();
+    }, []);
 
     return (
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
