@@ -16,16 +16,17 @@ export async function sendVerificationEmail(payload: VerificationEmailPayload) {
   console.log(" MOCK EMAIL: Sending Verification   ");
   console.log("====================================");
   console.log(`Recipient: ${to}`);
-  console.log(`Subject: Activate Your Aether ID`);
+  console.log(`Subject: Activate Your Aether ID 🌍`);
   console.log("--- Body ---");
   console.log(`Hi ${name},`);
-  console.log(`Welcome to Aether 🌍`);
-  console.log(`Your unique Aether ID is: ${aetherId}`);
   console.log(``);
-  console.log(`Click below to activate your account and start your journey:`);
-  console.log(verificationLink);
+  console.log(`Welcome to the Aether Ecosystem! 🎉`);
+  console.log(`Your unique Aether ID is: ${aetherId}.`);
   console.log(``);
-  console.log(`If you didn’t sign up, ignore this email.`);
+  console.log(`Click the button below to activate your account:`);
+  console.log(`[Activate My Aether ID] -> ${verificationLink}`);
+  console.log(``);
+  console.log(`If you didn’t request this, please ignore.`);
   console.log("====================================");
 
   // In a real service, you would have error handling here.
