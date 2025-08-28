@@ -31,6 +31,11 @@ export default function EventsPage() {
         if (focusFilter !== "All Focuses" && event.focus !== focusFilter) return false;
 
         return true;
+    }).sort((a,b) => {
+        if (dateFilter === 'upcoming') {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+        }
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
     });
 
     const formatEventDate = (dateString: string) => {

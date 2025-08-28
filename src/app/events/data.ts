@@ -1,5 +1,35 @@
 
-export const mockEvents = [
+export type Event = {
+    code: string;
+    title: string;
+    date: string;
+    type: "Talk" | "Workshop" | "Challenge" | "Meetup";
+    focus: "Architecture" | "AI in Design" | "Web3" | "Computational Design" | "Sustainable Architecture" | "General";
+    description: string;
+    image: string;
+    aiHint: string;
+    platform: string;
+    location: string;
+    longDescription: string;
+    speakers: {
+        name: string;
+        title: string;
+        bio: string;
+        avatar: string;
+    }[];
+    agenda: {
+        time: string;
+        topic: string;
+    }[] | null;
+    whatToExpect?: string[];
+    whyAttend?: {
+        students: string;
+        professionals: string;
+    };
+};
+
+
+export const mockEvents: Event[] = [
     {
         code: "WAD-2025",
         title: "World Architecture Day: The Future of Urbanism",
@@ -11,7 +41,7 @@ export const mockEvents = [
         aiHint: "modern city architecture",
         platform: "Zoom",
         location: "Online",
-        longDescription: "In celebration of World Architecture Day, join us for a thought-provoking panel discussion featuring some of the world's most innovative architects. We will explore the future of urbanism, focusing on the roles of sustainability, technology, and community in shaping the cities of tomorrow. This is a unique opportunity to gain insights from industry leaders and participate in a global conversation.",
+        longDescription: "Join us on World Architecture Day, October 6, 2025, for the pre-launch of Aether Community, a digital-first architecture and design school empowering African creatives. Discover how peer learning, mentorship, and collective growth are transforming design education. Whether you’re a student dreaming of bold designs or a professional shaping Africa’s built future, this event is for you!",
         speakers: [
             { name: "Dr. Elena Vance", title: "Urban Futurist & Architect", bio: "Dr. Vance is a renowned architect and urban planner whose work focuses on creating resilient and human-centric cities.", avatar: "https://i.pravatar.cc/150?u=speaker1" },
             { name: "Marcus Thorne", title: "Principal, Thorne Architects", bio: "Marcus Thorne leads an award-winning firm known for its groundbreaking sustainable high-rise designs.", avatar: "https://i.pravatar.cc/150?u=speaker2" },
@@ -21,7 +51,18 @@ export const mockEvents = [
             { time: "10:15 AM", topic: "Panel Discussion: The Next Decade of Urban Design" },
             { time: "11:15 AM", topic: "Live Q&A with Audience" },
             { time: "11:45 AM", topic: "Closing Remarks" },
-        ]
+        ],
+        whatToExpect: [
+            'Inspiring opening by Inioluwa Oladipupo, Aether Community Lead.',
+            '1–2 minute teaser trailer unveiling Aether’s vision.',
+            'Panel discussion with a student, early-career designer, and seasoned architect on why community drives design innovation.',
+            'Live Q&A and poll to share your voice.',
+            'First look at Aether’s platforms and a teaser for our full launch on December 8, 2025.',
+        ],
+        whyAttend: {
+            students: 'Connect with peers, explore free learning resources, and get inspired to build your portfolio.',
+            professionals: 'Network with industry leaders, discover mentorship opportunities, and shape African design. Be part of a movement to redefine design education from Nigeria to the world!',
+        },
     },
     {
         code: "AI-DESIGN-01",
