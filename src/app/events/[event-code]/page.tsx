@@ -8,6 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { cookies } from "next/headers";
+import { db } from "@/services/airtable";
+import { RsvpDialog } from "@/components/events/RsvpDialog";
 
 interface EventDetailPageProps {
     params: {
@@ -31,7 +34,15 @@ export async function generateMetadata({ params }: EventDetailPageProps) {
 }
 
 
-export default function EventDetailPage({ params }: EventDetailPageProps) {
+export default async function EventDetailPage({ params }: EventDetailPageProps) {
+    const cookieStore = cookies();
+    const userId = cookieStore.get('aether_user_id')?.value;
+    
+    let user = null;
+    if (userId) {
+        user = await db.findUserById(userId);
+    }
+
     const event = mockEvents.find(e => e.code === params['event-code']);
 
     if (!event) {
@@ -130,7 +141,7 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
                     <aside className="lg:col-span-1">
                         <Card className="sticky top-24">
                             <CardHeader>
-                                <Button size="lg" className="w-full">RSVP Now</Button>
+                                <RsvpDialog eventTitle={event.title} user={user} />
                                 <p className="text-center text-sm text-muted-foreground mt-2">Secure your spot!</p>
                             </CardHeader>
                             <CardContent className="space-y-4 text-sm">
