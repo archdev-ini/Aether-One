@@ -24,8 +24,8 @@ type User = {
 };
 
 type RsvpPayload = {
-    'fldejTBGYZV2zwMaH': string[], // Event
-    'fldkyFvyFq2p40Prz'?: string[], // User
+    'Event': string[], 
+    'User'?: string[], 
     'Notes'?: string,
 }
 
@@ -133,23 +133,23 @@ function mapRecordToEvent(record: Record<FieldSet>): Event {
 function mapRecordToResource(record: Record<FieldSet>): Resource {
     const fields = record.fields;
     let tags: string[] = [];
-    if (typeof fields.Tags === 'string') {
-        tags = (fields.Tags as string).split(',').map(tag => tag.trim());
-    } else if (Array.isArray(fields.Tags)) {
-        tags = fields.Tags;
+    if (typeof fields.fld9ygUQWViVWFYuG === 'string') {
+        tags = (fields.fld9ygUQWViVWFYuG as string).split(',').map(tag => tag.trim());
+    } else if (Array.isArray(fields.fld9ygUQWViVWFYuG)) {
+        tags = fields.fld9ygUQWViVWFYuG;
     }
 
     return {
         id: record.id,
-        title: fields.Title as string,
-        category: fields.Category as Resource['category'],
-        type: fields.Type as Resource['type'],
-        author: fields.Author as string,
+        title: fields.fldBntPh6Rh1XRtL2 as string,
+        category: fields.fldDyd1hqxfO3pkjA as Resource['category'],
+        type: fields.fldlAzeoVlTMXDYXm as Resource['type'],
+        author: fields.fld8bWUJOJc4oojGE as string,
         tags,
-        link: fields.Link as string,
-        access: fields.Access as Resource['access'],
-        dateAdded: fields['Date Added'] as string,
-        description: fields.Description as string,
+        link: fields.fldPelfxEz472Cd6w as string,
+        access: fields.fld6eN4CWOZV57z0a as Resource['access'],
+        dateAdded: fields.fldtPmgHB5pcuZunMC as string,
+        description: fields.fldH5UYeRttsIEUpX as string,
     };
 }
 
@@ -323,7 +323,7 @@ export const db = {
     // KNOWLEDGE HUB FUNCTIONS
     async getResources(): Promise<Resource[]> {
         if (!base) return [];
-        const records = await fetchAllRecords<FieldSet>('KnowledgeHub');
+        const records = await fetchAllRecords<FieldSet>('tblPE0SNXLuWanfIk');
         return records.map(mapRecordToResource);
     },
 
@@ -368,3 +368,5 @@ export const db = {
         }
     }
 };
+
+    
