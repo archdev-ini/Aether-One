@@ -29,6 +29,14 @@ type RsvpPayload = {
     'Notes'?: string,
 }
 
+type SupportRequestPayload = {
+    'fldd5M9nJbBlstpgd': string; // Name
+    'fldFqQLyaPQCoAnGv': string; // Email
+    'fldRvJloMXtxtXqj9': string; // Category / Subject
+    'fldADkwRbJOn90s1G': string; // Message
+    'fldBs87WBIVMWUuLK': 'Open'; // Status
+}
+
 type AboutContent = {
     story: string;
     vision: string;
@@ -251,11 +259,10 @@ export const db = {
     async updateUserToken(email: string, token: string, expires: Date): Promise<User | null> {
         if (!base) return null;
         const user = await this.findUserByEmail(email);
-        if (!user) return null;
+        if (!user || !user.airtableId) return null;
 
         try {
-            const userRecord = (await base('tbl2Q9DdVCmKFKHnt').select({filterByFormula: `{fldG6cwfmkjJnv9j7} = "${email}"`}).firstPage())[0];
-            const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update(userRecord.id, {
+            const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update(user.airtableId, {
                  'fldEhutDpQHkfxRqf': token
             });
             return mapRecordToUser(updatedRecord);
@@ -343,6 +350,21 @@ export const db = {
         } catch (error) {
             console.error(`[Airtable] Error fetching About page content:`, error);
             return { story: 'Error loading story.', vision: 'Error loading vision.' };
+        }
+    },
+
+    // SUPPORT REQUEST FUNCTIONS
+    async createSupportRequest(requestData: Omit<SupportRequestPayload, 'fldBs87WBIVMWUuLK'>): Promise<void> {
+        if (!base) throw new Error("Airtable not configured");
+        try {
+            const payload: SupportRequestPayload = {
+                ...requestData,
+                'fldBs87WBIVMWUuLK': 'Open',
+            }
+            await base('tblvfz5CYg6MNgeMb').create([{ fields: payload }]);
+        } catch (error) {
+             console.error(`[Airtable] Error creating support request:`, error);
+             throw error;
         }
     }
 };

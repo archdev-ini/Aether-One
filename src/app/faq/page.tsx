@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -11,6 +12,9 @@ import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { submitSupportRequest } from "@/actions/support.actions";
 
 const faqItems = [
     {
@@ -40,6 +44,7 @@ const contactFormSchema = z.object({
 
 export default function FaqPage() {
     const { toast } = useToast();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof contactFormSchema>>({
         resolver: zodResolver(contactFormSchema),
@@ -50,13 +55,32 @@ export default function FaqPage() {
         },
     });
 
-    function onSubmit(values: z.infer<typeof contactFormSchema>) {
-        console.log(values);
-        toast({
-            title: "Message Sent!",
-            description: "Thanks for reaching out. We'll get back to you with a ticket ID shortly.",
-        });
-        form.reset();
+    async function onSubmit(values: z.infer<typeof contactFormSchema>) {
+        setIsSubmitting(true);
+        try {
+            const result = await submitSupportRequest(values);
+            if (result.success) {
+                toast({
+                    title: "Message Sent!",
+                    description: "Thanks for reaching out. We'll get back to you shortly.",
+                });
+                form.reset();
+            } else {
+                 toast({
+                    variant: "destructive",
+                    title: "Something went wrong",
+                    description: result.message || "There was a problem with your submission.",
+                });
+            }
+        } catch (error) {
+             toast({
+                variant: "destructive",
+                title: "Error",
+                description: "An unexpected error occurred. Please try again.",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -123,8 +147,8 @@ export default function FaqPage() {
                                                     <SelectContent>
                                                         <SelectItem value="General Inquiry">General Inquiry</SelectItem>
                                                         <SelectItem value="Partnership">Partnership</SelectItem>
-                                                        <SelectItem value="Press">Press</SelectItem>
-                                                        <SelectItem value="Support">Support</SelectItem>
+                                                        <SelectItem value="Technical Issue">Technical Issue</SelectItem>
+                                                        <SelectItem value="Other">Other</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage />
@@ -145,7 +169,10 @@ export default function FaqPage() {
                                         )}
                                     />
                                     <div className="text-center">
-                                      <Button type="submit" size="lg">Send Message</Button>
+                                      <Button type="submit" size="lg" disabled={isSubmitting}>
+                                        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Send Message
+                                      </Button>
                                     </div>
                                 </form>
                             </Form>
