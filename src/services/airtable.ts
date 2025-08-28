@@ -1,11 +1,10 @@
-
-// This is a mock database service.
-// In a real application, you would replace this with a connection to a real database like Airtable, Firebase, or PostgreSQL.
+import Airtable, { FieldSet, Records } from 'airtable';
 import type { Event } from '@/app/events/data';
 import type { Resource } from '@/app/knowledge/data';
 import type { UpdatePost } from '@/app/updates/data';
 
-
+// This is a mock database service.
+// In a real application, you would replace this with a connection to a real database like Airtable, Firebase, or PostgreSQL.
 type User = {
     AetherID: string;
     FullName: string;
@@ -35,124 +34,116 @@ type Rsvp = {
     'RSVP Timestamp': string,
 }
 
-// In-memory array to act as our database - CLEARED FOR PRODUCTION
-const users: User[] = [];
-const rsvps: Rsvp[] = [];
-const mockEvents: Event[] = [];
-const mockResources: Resource[] = [];
-const mockUpdates: UpdatePost[] = [];
+// Initialize Airtable
+const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID as string);
+
+// --- HELPER FUNCTIONS ---
+// These helpers will handle fetching all pages of records and mapping fields.
+// This reduces boilerplate code in the main functions.
+
+async function fetchAllRecords<T extends FieldSet>(tableId: string): Promise<Records<T>> {
+    try {
+        const table = base(tableId);
+        const records = await table.select().all();
+        console.log(`[Airtable] Fetched ${records.length} records from table ${tableId}`);
+        return records;
+    } catch (error) {
+        console.error(`[Airtable] Error fetching from table ${tableId}:`, error);
+        return [];
+    }
+}
+
+function mapRecordToUser(record: any): User {
+    const fields = record.fields;
+    return {
+        AetherID: fields['Aether ID'],
+        FullName: fields['Full Name'],
+        Email: fields['Email'],
+        CityCountry: fields['City + Country'],
+        AgeRange: fields['Age Range'],
+        CurrentRole: fields['Current Role'],
+        MainInterest: fields['Main Interest'],
+        PreferredCommunityPlatform: fields['Preferred Platform'],
+        SocialHandle: fields['Social Handle'],
+        Goals: fields['Goals'],
+        IsActivated: fields['Is Activated'] || false,
+        VerificationToken: fields['Verification Token'],
+        VerificationTokenExpires: new Date(fields['Verification Token Expires']),
+        CreatedAt: new Date(fields['Created At']),
+        ActivatedAt: fields['Activated At'] ? new Date(fields['Activated At']) : null,
+    };
+}
 
 
+// --- DATABASE FUNCTIONS ---
 export const db = {
     // USER FUNCTIONS
     async findUserByEmail(email: string): Promise<User | null> {
-        console.log(`[DB MOCK] Searching for user with email: ${email}`);
-        const user = users.find((u) => u.Email === email);
-        console.log(user ? `[DB MOCK] User found.` : `[DB MOCK] User not found.`);
-        return user || null;
+        // TODO: Replace with Airtable API call
+        console.log(`[Airtable MOCK] Searching for user with email: ${email}`);
+        return null;
     },
 
     async findUserById(id: string): Promise<User | null> {
-        console.log(`[DB MOCK] Searching for user with ID: ${id}`);
-        const user = users.find((u) => u.AetherID === id);
-        console.log(user ? `[DB MOCK] User found.` : `[DB MOCK] User not found.`);
-        return user || null;
+        // TODO: Replace with Airtable API call
+        console.log(`[Airtable MOCK] Searching for user with ID: ${id}`);
+        return null;
     },
 
     async createUser(userData: Omit<User, 'CreatedAt' | 'ActivatedAt'>): Promise<User> {
-        const existingUserIndex = users.findIndex(u => u.Email === userData.Email);
-
-        const userRecord: User = {
-            ...userData,
-            CreatedAt: new Date(), 
-            ActivatedAt: null,
-        };
-
-        if (existingUserIndex !== -1 && !users[existingUserIndex].IsActivated) {
-            // Update existing unverified user
-            console.log(`[DB MOCK] Updating existing user: ${userData.Email}`);
-            users[existingUserIndex] = { ...users[existingUserIndex], ...userRecord };
-            return users[existingUserIndex];
-        } else {
-            // Create new user
-            console.log(`[DB MOCK] Creating new user: ${userData.Email} with Aether ID: ${userData.AetherID}`);
-            users.push(userRecord);
-            return userRecord;
-        }
+        // TODO: Replace with Airtable API call
+        console.log(`[Airtable MOCK] Creating/Updating user: ${userData.Email}`);
+        return { ...userData, CreatedAt: new Date(), ActivatedAt: null };
     },
 
     async verifyUserByToken(token: string): Promise<User | null> {
-        console.log(`[DB MOCK] Attempting to verify token: ${token}`);
-        const userIndex = users.findIndex(
-            (u) =>
-                u.VerificationToken === token &&
-                u.VerificationTokenExpires > new Date()
-        );
-
-        if (userIndex === -1) {
-            console.log(`[DB MOCK] Token invalid or expired.`);
-            return null;
-        }
-
-        const user = users[userIndex];
-        user.IsActivated = true;
-        user.ActivatedAt = new Date();
-        user.VerificationToken = ''; // Invalidate the token after use
-        
-        console.log(`[DB MOCK] User ${user.Email} verified successfully.`);
-        return user;
+        // TODO: Replace with Airtable API call
+        console.log(`[Airtable MOCK] Verifying token: ${token}`);
+        return null;
     },
 
     async updateUserToken(email: string, token: string, expires: Date): Promise<User | null> {
-        console.log(`[DB MOCK] Updating token for user: ${email}`);
-        const userIndex = users.findIndex((u) => u.Email === email && u.IsActivated);
-
-        if (userIndex === -1) {
-            console.log(`[DB MOCK] Could not find active user to update token.`);
-            return null;
-        }
-
-        users[userIndex].VerificationToken = token;
-        users[userIndex].VerificationTokenExpires = expires;
-
-        console.log(`[DB MOCK] Token updated successfully for ${email}.`);
-        return users[userIndex];
+        // TODO: Replace with Airtable API call
+        console.log(`[Airtable MOCK] Updating token for: ${email}`);
+        return null;
     },
-
 
     // RSVP / EVENT FUNCTIONS
     async createRsvp(rsvpData: Rsvp): Promise<Rsvp> {
-        console.log(`[DB MOCK] Creating new RSVP for event: ${rsvpData['Event Code']}`);
-        rsvps.push(rsvpData);
+        // TODO: Replace with Airtable API call
+        console.log(`[Airtable MOCK] Creating RSVP for: ${rsvpData['Event Code']}`);
         return rsvpData;
     },
 
     async getRsvpCountForEvent(eventCode: string): Promise<number> {
-        const count = rsvps.filter(r => r['Event Code'] === eventCode).length;
-        console.log(`[DB MOCK] Found ${count} RSVPs for event ${eventCode}`);
-        return count;
+        // TODO: Replace with Airtable API call
+        console.log(`[Airtable MOCK] Getting RSVP count for: ${eventCode}`);
+        return 0;
     },
 
     async getEvents(): Promise<Event[]> {
-        console.log("[DB MOCK] Fetching all events.");
-        return mockEvents;
+        // TODO: Replace with Airtable API call
+        console.log("[Airtable MOCK] Fetching all events.");
+        return [];
     },
 
     async getEventByCode(code: string): Promise<Event | null> {
-        console.log(`[DB MOCK] Fetching event with code: ${code}`);
-        const event = mockEvents.find(e => e.code === code);
-        return event || null;
+        // TODO: Replace with Airtable API call
+        console.log(`[Airtable MOCK] Fetching event: ${code}`);
+        return null;
     },
 
     // KNOWLEDGE HUB FUNCTIONS
     async getResources(): Promise<Resource[]> {
-        console.log("[DB MOCK] Fetching all knowledge hub resources.");
-        return mockResources;
+         // TODO: Replace with Airtable API call
+        console.log("[Airtable MOCK] Fetching all knowledge hub resources.");
+        return [];
     },
 
     // UPDATES FEED FUNCTIONS
     async getUpdates(): Promise<UpdatePost[]> {
-        console.log("[DB MOCK] Fetching all update posts.");
-        return mockUpdates;
+        // TODO: Replace with Airtable API call
+        console.log("[Airtable MOCK] Fetching all update posts.");
+        return [];
     }
 };
