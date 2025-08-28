@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, ExternalLink, Lock, Search } from "lucide-react";
 import Link from "next/link";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 const categories = ["All Categories", "Architecture & Design", "Technology & Web3", "Community & Leadership", "Aether Insights"];
 const resourceTypes = ["All Types", "Article", "Video", "PDF", "Tool", "Course"];
@@ -57,7 +59,7 @@ export default function KnowledgePage() {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 gap-4 md:w-auto md:max-w-xs">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:flex-grow md:max-w-xs">
                              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Category" />
@@ -137,24 +139,3 @@ export default function KnowledgePage() {
         </div>
     );
 }
-
-// Minimal Tooltip components for this page to avoid prop drilling issues
-const TooltipProvider = ({ children }: { children: React.ReactNode }) => {
-    const TooltipProvider = require('@/components/ui/tooltip').TooltipProvider;
-    return <TooltipProvider>{children}</TooltipProvider>;
-};
-
-const Tooltip = ({ children }: { children: React.ReactNode }) => {
-    const Tooltip = require('@/components/ui/tooltip').Tooltip;
-    return <Tooltip>{children}</Tooltip>;
-};
-
-const TooltipTrigger = ({ children }: { children: React.ReactNode }) => {
-    const TooltipTrigger = require('@/components/ui/tooltip').TooltipTrigger;
-    return <TooltipTrigger asChild>{children}</TooltipTrigger>;
-};
-
-const TooltipContent = ({ children }: { children: React.ReactNode }) => {
-    const TooltipContent = require('@/components/ui/tooltip').TooltipContent;
-    return <TooltipContent>{children}</TooltipContent>;
-};
