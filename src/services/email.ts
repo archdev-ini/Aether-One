@@ -9,6 +9,12 @@ type VerificationEmailPayload = {
   verificationLink: string;
 };
 
+type LoginEmailPayload = {
+  to: string;
+  name: string;
+  loginLink: string;
+}
+
 export async function sendVerificationEmail(payload: VerificationEmailPayload) {
   const { to, name, aetherId, verificationLink } = payload;
 
@@ -31,5 +37,27 @@ export async function sendVerificationEmail(payload: VerificationEmailPayload) {
 
   // In a real service, you would have error handling here.
   // For the mock, we'll just assume it always succeeds.
+  return { success: true };
+}
+
+
+export async function sendLoginEmail(payload: LoginEmailPayload) {
+  const { to, name, loginLink } = payload;
+
+  console.log("====================================");
+  console.log(" MOCK EMAIL: Sending Login Link     ");
+  console.log("====================================");
+  console.log(`Recipient: ${to}`);
+  console.log(`Subject: Sign in to Aether 🔑`);
+  console.log("--- Body ---");
+  console.log(`Hi ${name},`);
+  console.log(``);
+  console.log(`Click the button below to sign in to your Aether account:`);
+  console.log(`[Sign In] -> ${loginLink}`);
+  console.log(``);
+  console.log(`This link will expire in 15 minutes.`);
+  console.log(`If you didn’t request this, please ignore.`);
+  console.log("====================================");
+
   return { success: true };
 }

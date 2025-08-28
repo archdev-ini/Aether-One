@@ -74,4 +74,20 @@ export const db = {
         console.log(`[DB MOCK] User ${user.Email} verified successfully.`);
         return user;
     },
+
+    async updateUserToken(email: string, token: string, expires: Date): Promise<User | null> {
+        console.log(`[DB MOCK] Updating token for user: ${email}`);
+        const userIndex = users.findIndex((u) => u.Email === email && u.IsActivated);
+
+        if (userIndex === -1) {
+            console.log(`[DB MOCK] Could not find active user to update token.`);
+            return null;
+        }
+
+        users[userIndex].VerificationToken = token;
+        users[userIndex].VerificationTokenExpires = expires;
+
+        console.log(`[DB MOCK] Token updated successfully.`);
+        return users[userIndex];
+    }
 };

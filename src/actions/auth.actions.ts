@@ -6,7 +6,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { db } from "@/services/airtable";
-import { sendVerificationEmail } from "@/services/email";
+import { sendVerificationEmail, sendLoginEmail } from "@/services/email";
 
 const formSchema = z.object({
   fullName: z.string().min(2),
@@ -26,7 +26,7 @@ export async function createUser(values: z.infer<typeof formSchema>) {
 
         const existingUser = await db.findUserByEmail(validatedData.email);
 
-        if (existingUser && existingUser.verified) {
+        if (existingUser && existingUser.IsActivated) {
             return { success: false, message: "An account with this email already exists and is verified." };
         }
 
@@ -103,4 +103,34 @@ export async function verifyTokenAndLogin(token: string) {
 
     // Redirect to profile page after successful verification
     redirect('/profile');
+}
+
+
+export async function sendLoginLink(email: string) {
+    try {
+        const user = await db.findUserByEmail(email);
+
+        if (!user || !user.IsActivated) {
+            return { success: false, message: "No active account found for this email. Please sign up first." };
+        }
+
+        const loginToken = crypto.randomUUID();
+        const loginTokenExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
+
+        await db.updateUserToken(email, loginToken, loginTokenExpires);
+
+        const loginLink = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify?token=${loginToken}`;
+
+        await sendLoginEmail({
+            to: user.Email,
+            name: user.FullName,
+            loginLink,
+        });
+
+        return { success: true, message: `A magic link has been sent to ${email}.` };
+
+    } catch (error) {
+        console.error("Error sending login link:", error);
+        return { success: false, message: "An unexpected error occurred." };
+    }
 }

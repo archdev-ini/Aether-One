@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -19,7 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
 const navLinks = [
-  { href: '/events', label: 'Events' },
+  { href: '/programs', label: 'Programs' },
   { href: '/about', label: 'About' },
   { href: '/faq', label: 'FAQ' },
 ];
@@ -65,15 +66,8 @@ export function Header({ user: initialUser }: HeaderProps) {
   }, [initialUser]);
 
   const handleLogout = async () => {
-    // Clear localStorage for immediate client-side UI update
-    localStorage.removeItem('aether_user_id');
-    localStorage.removeItem('aether_user_name');
     
-    // Server-side cleanup (calling a server action)
-    // await fetch('/api/logout', { method: 'POST' });
-
-    // This event will trigger the useEffect to update state
-    window.dispatchEvent(new Event('auth-change'));
+    await fetch('/api/logout', { method: 'POST' });
 
     toast({ description: "You have been logged out." });
     
@@ -165,14 +159,14 @@ export function Header({ user: initialUser }: HeaderProps) {
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
                             <Link href="/profile">
-                                <User className="mr-2" />
-                                Profile
+                                <User className="mr-2 h-4 w-4" />
+                                <span>Profile</span>
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout}>
-                            <LogOut className="mr-2"/>
-                            Logout
+                            <LogOut className="mr-2 h-4 w-4"/>
+                            <span>Logout</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -181,7 +175,7 @@ export function Header({ user: initialUser }: HeaderProps) {
                     <Button asChild variant="outline" className="hidden sm:inline-flex">
                         <Link href="/login">Login</Link>
                     </Button>
-                    <Button asChild id="get-aether-id-header">
+                    <Button asChild>
                         <Link href="/join">Get Your Aether ID</Link>
                     </Button>
                 </>
