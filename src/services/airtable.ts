@@ -4,9 +4,8 @@ import type { Event } from '@/app/events/data';
 import type { Resource } from '@/app/knowledge/data';
 import type { UpdatePost } from '@/app/updates/data';
 
-// This is a mock database service.
-// In a real application, you would replace this with a connection to a real database like Airtable, Firebase, or PostgreSQL.
 type User = {
+    airtableId?: string;
     AetherID: string;
     FullName: string;
     Email: string;
@@ -24,29 +23,19 @@ type User = {
     ActivatedAt?: Date | null;
 };
 
-type Rsvp = {
-    'Event Code': string,
-    'Full Name': string,
-    'Email': string,
-    'Aether ID'?: string,
-    'City + Country'?: string,
-    'Platform': string,
-    'Interest Notes'?: string,
-    'RSVP Timestamp': string,
+type RsvpPayload = {
+    'Event': string[],
+    'User'?: string[],
+    'Notes'?: string,
 }
 
 if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID) {
     console.warn("Airtable API Key or Base ID is not set. Using mock data.");
 }
 
-// Initialize Airtable
 const base = process.env.AIRTABLE_API_KEY && process.env.AIRTABLE_BASE_ID 
     ? new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID)
     : null;
-
-// --- HELPER FUNCTIONS ---
-// These helpers will handle fetching all pages of records and mapping fields.
-// This reduces boilerplate code in the main functions.
 
 async function fetchAllRecords<T extends FieldSet>(tableId: string): Promise<Records<T>> {
     if (!base) return [];
@@ -63,13 +52,12 @@ async function fetchAllRecords<T extends FieldSet>(tableId: string): Promise<Rec
 
 function mapRecordToUser(record: Record<FieldSet>): User {
     const fields = record.fields;
-    // The `Preferred Community Platform` is a multi-select, so we take the first one for now.
-    // This could be updated in the future to support multiple platforms.
     const preferredPlatform = Array.isArray(fields.fldpL0ntu6jlFPZ8P) 
         ? (fields.fldpL0ntu6jlFPZ8P as string[])[0] 
         : fields.fldpL0ntu6jlFPZ8P as string;
 
     return {
+        airtableId: record.id,
         AetherID: fields.fldFXMNoNPjbk6ypb as string,
         FullName: fields.fldqcL4FrRIYg40qb as string,
         Email: fields.fldG6cwfmkjJnv9j7 as string,
@@ -81,10 +69,10 @@ function mapRecordToUser(record: Record<FieldSet>): User {
         SocialHandle: fields.fld1xxrWwFQ3B3Azn as string,
         Goals: fields.fldK7jPkvMehvA6XX as string,
         IsActivated: fields.fldZmHeRYwkkqrsOG === 'Active',
-        VerificationToken: fields.fldEhutDpQHkfxRqf as string, // Using Auth Link as the token field
-        VerificationTokenExpires: new Date(), // This needs a dedicated field in Airtable
+        VerificationToken: fields.fldEhutDpQHkfxRqf as string,
+        VerificationTokenExpires: new Date(), 
         CreatedAt: new Date(fields.fldeAm50SwW5CMIZS as string),
-        ActivatedAt: fields.fldZmHeRYwkkqrsOG === 'Active' ? new Date() : null, // This needs a dedicated field
+        ActivatedAt: fields.fldZmHeRYwkkqrsOG === 'Active' ? new Date() : null,
     };
 }
 
@@ -92,7 +80,7 @@ function mapRecordToUser(record: Record<FieldSet>): User {
 function mapRecordToEvent(record: Record<FieldSet>): Event {
     const fields = record.fields;
     let speakers: Event['speakers'] = [];
-    if (fields.fld7qYoCXteCIAM32) { // Speakers
+    if (fields.fld7qYoCXteCIAM32) {
         try {
             speakers = JSON.parse(fields.fld7qYoCXteCIAM32 as string);
         } catch(e) {
@@ -101,7 +89,7 @@ function mapRecordToEvent(record: Record<FieldSet>): Event {
     }
 
     let agenda: Event['agenda'] = [];
-     if (fields.Agenda) { // No ID provided for Agenda, keeping original logic
+     if (fields.Agenda) {
         try {
             agenda = JSON.parse(fields.Agenda as string);
         } catch(e) {
@@ -111,17 +99,18 @@ function mapRecordToEvent(record: Record<FieldSet>): Event {
 
 
     return {
-        code: fields.fldmtn2xFhtijck4H as string, // Shortcode
-        title: fields.fld1w8i3kvk81KTN1 as string, // Event Name
-        date: fields.fldtOlaXw6TXiftBp as string, // Date
-        type: fields.fldrIhDKMTz05NbjW as Event['type'], // Event Type
-        focus: "General", // No focus field provided in schema, defaulting
-        description: (fields.fldeUgXSaYspo7nj6 as string)?.substring(0, 150) + '...' || '', // Description (truncated for card)
-        image: "https://picsum.photos/800/600", // No image field in schema, using placeholder
-        aiHint: "event placeholder", // No AI hint in schema
-        platform: "Online", // No platform field in schema, defaulting
-        location: "Global", // No location field in schema, defaulting
-        longDescription: fields.fldeUgXSaYspo7nj6 as string, // Description
+        airtableId: record.id,
+        code: fields.fldmtn2xFhtijck4H as string,
+        title: fields.fld1w8i3kvk81KTN1 as string,
+        date: fields.fldtOlaXw6TXiftBp as string,
+        type: fields.fldrIhDKMTz05NbjW as Event['type'],
+        focus: "General",
+        description: (fields.fldeUgXSaYspo7nj6 as string)?.substring(0, 150) + '...' || '',
+        image: "https://picsum.photos/800/600",
+        aiHint: "event placeholder",
+        platform: "Online",
+        location: "Global",
+        longDescription: fields.fldeUgXSaYspo7nj6 as string,
         speakers,
         agenda,
     };
@@ -163,7 +152,6 @@ function mapRecordToUpdate(record: Record<FieldSet>): UpdatePost {
 }
 
 
-// --- DATABASE FUNCTIONS ---
 export const db = {
     // USER FUNCTIONS
     async findUserByEmail(email: string): Promise<User | null> {
@@ -202,7 +190,7 @@ export const db = {
         }
     },
 
-    async createUser(userData: Omit<User, 'CreatedAt' | 'ActivatedAt' | 'AetherID'>): Promise<User | null> {
+    async createUser(userData: Omit<User, 'CreatedAt' | 'ActivatedAt' | 'AetherID' | 'airtableId'>): Promise<User | null> {
          if (!base) return null;
         try {
             const record = await base('tbl2Q9DdVCmKFKHnt').create([
@@ -244,7 +232,7 @@ export const db = {
             const userRecord = records[0];
             const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update(userRecord.id, {
                 'fldZmHeRYwkkqrsOG': 'Active',
-                'fldEhutDpQHkfxRqf': null, // Clear the token
+                'fldEhutDpQHkfxRqf': null, 
             });
 
             return mapRecordToUser(updatedRecord);
@@ -272,13 +260,12 @@ export const db = {
     },
 
     // RSVP / EVENT FUNCTIONS
-    async createRsvp(rsvpData: Rsvp): Promise<Rsvp> {
+    async createRsvp(rsvpData: RsvpPayload): Promise<void> {
         if (!base) throw new Error("Airtable not configured");
         try {
-            await base('Events_RSVP').create([{ fields: rsvpData }]);
-            return rsvpData;
+            await base('tblzZ5tXPYQaavzEJ').create([{ fields: rsvpData }]);
         } catch (error) {
-             console.error(`[Airtable] Error creating RSVP for event ${rsvpData['Event Code']}:`, error);
+             console.error(`[Airtable] Error creating RSVP:`, error);
              throw error;
         }
     },
@@ -286,9 +273,10 @@ export const db = {
     async getRsvpCountForEvent(eventCode: string): Promise<number> {
         if (!base) return 0;
         try {
-            const records = await fetchAllRecords<{ 'Event Code': string }>('Events_RSVP');
-            const filtered = records.filter(r => r.fields['Event Code'] === eventCode);
-            return filtered.length;
+            const records = await base('tblzZ5tXPYQaavzEJ').select({
+                filterByFormula: `{fldfnpJ4aHxdweObc} = "${eventCode}"`
+            }).all();
+            return records.length;
         } catch (error) {
             console.error(`[Airtable] Error getting RSVP count for event ${eventCode}:`, error);
             return 0;

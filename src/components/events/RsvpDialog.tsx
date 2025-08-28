@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
@@ -42,8 +41,6 @@ const rsvpFormSchema = z.object({
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   aetherId: z.string().optional(),
-  cityCountry: z.string().optional(),
-  preferredPlatform: z.string({ required_error: "Please select your preferred platform." }),
   interest: z.string().optional(),
 });
 
@@ -60,8 +57,6 @@ export function RsvpDialog({ eventTitle, eventCode, user }: RsvpDialogProps) {
       fullName: user?.FullName || "",
       email: user?.Email || "",
       aetherId: user?.AetherID || "",
-      cityCountry: user?.CityCountry || "",
-      preferredPlatform: user?.PreferredCommunityPlatform || undefined,
       interest: "",
     },
   });
@@ -119,7 +114,7 @@ export function RsvpDialog({ eventTitle, eventCode, user }: RsvpDialogProps) {
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your full name" {...field} />
+                      <Input placeholder="Your full name" {...field} disabled={!!user} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -132,7 +127,7 @@ export function RsvpDialog({ eventTitle, eventCode, user }: RsvpDialogProps) {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="your@email.com" {...field} />
+                      <Input placeholder="your@email.com" {...field} disabled={!!user} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -154,43 +149,6 @@ export function RsvpDialog({ eventTitle, eventCode, user }: RsvpDialogProps) {
                     )}
                 />
             )}
-             <FormField
-                control={form.control}
-                name="cityCountry"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>City + Country <span className="text-muted-foreground">(Optional)</span></FormLabel>
-                        <FormControl>
-                            <Input placeholder="e.g. Accra, Ghana" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
-             <FormField
-                control={form.control}
-                name="preferredPlatform"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Preferred Platform</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select a platform" />
-                            </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <SelectItem value="Discord">Discord</SelectItem>
-                                <SelectItem value="Telegram">Telegram</SelectItem>
-                                <SelectItem value="WhatsApp">WhatsApp</SelectItem>
-                                <SelectItem value="X">X</SelectItem>
-                                <SelectItem value="Instagram">Instagram</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
             <FormField
                 control={form.control}
                 name="interest"

@@ -11,36 +11,44 @@ type RsvpFormValues = {
   fullName: string;
   email: string;
   aetherId?: string;
-  cityCountry?: string;
-  preferredPlatform: string;
   interest?: string;
 };
 
 export async function submitRsvp(values: RsvpFormValues) {
     console.log("====================================");
-    console.log(" MOCK RSVP SUBMISSION TO AIRTABLE   ");
+    console.log("   RSVP SUBMISSION TO AIRTABLE      ");
     console.log("====================================");
     
-    // In a real application, you would use the Airtable API here
-    // to create a new record in your 'Events_RSVP' table.
-    const rsvpRecord = {
-        'Event Code': values.eventCode,
-        'Full Name': values.fullName,
-        'Email': values.email,
-        'Aether ID': values.aetherId,
-        'City + Country': values.cityCountry,
-        'Platform': values.preferredPlatform,
-        'Interest Notes': values.interest,
-        'RSVP Timestamp': new Date().toISOString(),
-    };
+    const event = await db.getEventByCode(values.eventCode);
+    if (!event || !event.airtableId) {
+        return { success: false, message: "This event could not be found." };
+    }
 
+    let user;
+    if (values.aetherId) {
+        user = await db.findUserById(values.aetherId);
+    }
+
+    // Even if there's no logged-in user, we might find an existing user by email
+    if (!user) {
+        user = await db.findUserByEmail(values.email);
+    }
+    
+    const rsvpRecord = {
+        'Event': [event.airtableId], // Link to the event record
+        'User': user && user.airtableId ? [user.airtableId] : undefined, // Link to user if they exist
+        'Notes': values.interest,
+        // The form now only collects interest, name and email are derived or entered.
+        // Status and Registration Date are handled by Airtable.
+    };
+    
+    console.log("Record to be saved to 'Event Registrations' table:");
+    console.log(rsvpRecord);
+    
     await db.createRsvp(rsvpRecord);
 
-    console.log("Record to be saved to 'Events_RSVP' table:");
-    console.log(rsvpRecord);
     console.log("====================================");
 
-    const event = await db.getEventByCode(values.eventCode);
 
     if (event) {
         await sendRsvpConfirmationEmail({
