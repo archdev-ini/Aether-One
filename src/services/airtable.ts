@@ -63,22 +63,28 @@ async function fetchAllRecords<T extends FieldSet>(tableId: string): Promise<Rec
 
 function mapRecordToUser(record: Record<FieldSet>): User {
     const fields = record.fields;
+    // The `Preferred Community Platform` is a multi-select, so we take the first one for now.
+    // This could be updated in the future to support multiple platforms.
+    const preferredPlatform = Array.isArray(fields.fldpL0ntu6jlFPZ8P) 
+        ? (fields.fldpL0ntu6jlFPZ8P as string[])[0] 
+        : fields.fldpL0ntu6jlFPZ8P as string;
+
     return {
-        AetherID: fields['Aether ID'] as string,
-        FullName: fields['Full Name'] as string,
-        Email: fields['Email'] as string,
-        CityCountry: fields['City + Country'] as string,
-        AgeRange: fields['Age Range'] as string,
-        CurrentRole: fields['Current Role'] as string,
-        MainInterest: fields['Main Interest'] as string,
-        PreferredCommunityPlatform: fields['Preferred Platform'] as string,
-        SocialHandle: fields['Social Handle'] as string,
-        Goals: fields['Goals'] as string,
-        IsActivated: fields['Is Activated'] as boolean || false,
-        VerificationToken: fields['Verification Token'] as string,
-        VerificationTokenExpires: new Date(fields['Verification Token Expires'] as string),
-        CreatedAt: new Date(fields['Created At'] as string),
-        ActivatedAt: fields['Activated At'] ? new Date(fields['Activated At'] as string) : null,
+        AetherID: fields.fldFXMNoNPjbk6ypb as string,
+        FullName: fields.fldqcL4FrRIYg40qb as string,
+        Email: fields.fldG6cwfmkjJnv9j7 as string,
+        CityCountry: fields.fldUUjY4wwNBdkq8u as string,
+        AgeRange: fields.fld0kF6qzsFTPaLur as string,
+        CurrentRole: fields.fldDgav4evACyC1A3 as string,
+        MainInterest: fields.fldcxf5CUpXhmDHnJ as string,
+        PreferredCommunityPlatform: preferredPlatform,
+        SocialHandle: fields.fld1xxrWwFQ3B3Azn as string,
+        Goals: fields.fldK7jPkvMehvA6XX as string,
+        IsActivated: fields.fldZmHeRYwkkqrsOG === 'Active',
+        VerificationToken: fields.fldEhutDpQHkfxRqf as string, // Using Auth Link as the token field
+        VerificationTokenExpires: new Date(), // This needs a dedicated field in Airtable
+        CreatedAt: new Date(fields.fldeAm50SwW5CMIZS as string),
+        ActivatedAt: fields.fldZmHeRYwkkqrsOG === 'Active' ? new Date() : null, // This needs a dedicated field
     };
 }
 
@@ -163,8 +169,8 @@ export const db = {
     async findUserByEmail(email: string): Promise<User | null> {
         if (!base) return null;
         try {
-            const records = await base('Users').select({
-                filterByFormula: `{Email} = "${email}"`,
+            const records = await base('tbl2Q9DdVCmKFKHnt').select({
+                filterByFormula: `{fldG6cwfmkjJnv9j7} = "${email}"`,
                 maxRecords: 1
             }).firstPage();
 
@@ -181,8 +187,8 @@ export const db = {
     async findUserById(id: string): Promise<User | null> {
          if (!base) return null;
         try {
-            const records = await base('Users').select({
-                filterByFormula: `{Aether ID} = "${id}"`,
+            const records = await base('tbl2Q9DdVCmKFKHnt').select({
+                filterByFormula: `{fldFXMNoNPjbk6ypb} = "${id}"`,
                 maxRecords: 1
             }).firstPage();
 
@@ -196,25 +202,25 @@ export const db = {
         }
     },
 
-    async createUser(userData: Omit<User, 'CreatedAt' | 'ActivatedAt' | 'AetherID'> & { AetherID: string }): Promise<User | null> {
+    async createUser(userData: Omit<User, 'CreatedAt' | 'ActivatedAt' | 'AetherID'>): Promise<User | null> {
          if (!base) return null;
         try {
-            const record = await base('Users').create([
+            const record = await base('tbl2Q9DdVCmKFKHnt').create([
                 {
                     fields: {
-                        'Aether ID': userData.AetherID,
-                        'Full Name': userData.FullName,
-                        'Email': userData.Email,
-                        'City + Country': userData.CityCountry,
-                        'Age Range': userData.AgeRange,
-                        'Current Role': userData.CurrentRole,
-                        'Main Interest': userData.MainInterest,
-                        'Preferred Platform': userData.PreferredCommunityPlatform,
-                        'Social Handle': userData.SocialHandle,
-                        'Goals': userData.Goals,
-                        'Is Activated': userData.IsActivated,
-                        'Verification Token': userData.VerificationToken,
-                        'Verification Token Expires': userData.VerificationTokenExpires.toISOString(),
+                        'fldqcL4FrRIYg40qb': userData.FullName,
+                        'fldG6cwfmkjJnv9j7': userData.Email,
+                        'fldUUjY4wwNBdkq8u': userData.CityCountry,
+                        'fld0kF6qzsFTPaLur': userData.AgeRange,
+                        'fldDgav4evACyC1A3': userData.CurrentRole,
+                        'fldcxf5CUpXhmDHnJ': userData.MainInterest,
+                        'fldpL0ntu6jlFPZ8P': [userData.PreferredCommunityPlatform],
+                        'fld1xxrWwFQ3B3Azn': userData.SocialHandle,
+                        'fldK7jPkvMehvA6XX': userData.Goals,
+                        'fldZmHeRYwkkqrsOG': 'Pending',
+                        // NOTE: You will need to add fields in Airtable for token and expiry.
+                        // For now, we are using Auth Link, but it's not ideal for expiry.
+                        'fldEhutDpQHkfxRqf': userData.VerificationToken
                     }
                 }
             ]);
@@ -228,8 +234,10 @@ export const db = {
    async verifyUserByToken(token: string): Promise<User | null> {
         if (!base) return null;
         try {
-            const records = await base('Users').select({
-                filterByFormula: `AND({Verification Token} = "${token}", IS_AFTER({Verification Token Expires}, NOW()))`,
+             // NOTE: This logic needs to be adapted. Airtable doesn't support token expiry checks in formulas easily.
+             // This lookup should be done against a temporary token field.
+            const records = await base('tbl2Q9DdVCmKFKHnt').select({
+                filterByFormula: `{fldEhutDpQHkfxRqf} = "${token}"`,
                 maxRecords: 1
             }).firstPage();
 
@@ -238,11 +246,9 @@ export const db = {
             }
 
             const userRecord = records[0];
-            const updatedRecord = await base('Users').update(userRecord.id, {
-                'Is Activated': true,
-                'ActivatedAt': new Date().toISOString(),
-                'Verification Token': null,
-                'Verification Token Expires': null,
+            const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update(userRecord.id, {
+                'fldZmHeRYwkkqrsOG': 'Active',
+                'fldEhutDpQHkfxRqf': null, // Clear the token
             });
 
             return mapRecordToUser(updatedRecord);
@@ -258,10 +264,9 @@ export const db = {
         if (!user) return null;
 
         try {
-            const userRecord = (await base('Users').select({filterByFormula: `{Email} = "${email}"`}).firstPage())[0];
-            const updatedRecord = await base('Users').update(userRecord.id, {
-                'Verification Token': token,
-                'Verification Token Expires': expires.toISOString(),
+            const userRecord = (await base('tbl2Q9DdVCmKFKHnt').select({filterByFormula: `{fldG6cwfmkjJnv9j7} = "${email}"`}).firstPage())[0];
+            const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update(userRecord.id, {
+                 'fldEhutDpQHkfxRqf': token
             });
             return mapRecordToUser(updatedRecord);
         } catch (error) {
@@ -332,5 +337,3 @@ export const db = {
         return records.map(mapRecordToUpdate);
     }
 };
-
-    

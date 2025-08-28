@@ -30,11 +30,10 @@ export async function createUser(values: z.infer<typeof formSchema>) {
             return { success: false, message: "An account with this email already exists and is verified." };
         }
 
-        const aetherId = `AX-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`;
         const verificationToken = crypto.randomUUID();
         const verificationTokenExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
 
-        await db.createUser({
+        const newUser = await db.createUser({
             FullName: validatedData.fullName,
             Email: validatedData.email,
             CityCountry: validatedData.location,
@@ -44,18 +43,21 @@ export async function createUser(values: z.infer<typeof formSchema>) {
             PreferredCommunityPlatform: validatedData.preferredPlatform,
             SocialHandle: validatedData.socialHandle,
             Goals: validatedData.goals,
-            AetherID: aetherId,
             VerificationToken: verificationToken,
             VerificationTokenExpires: verificationTokenExpires,
             IsActivated: false,
         });
+
+        if (!newUser) {
+            return { success: false, message: "Could not create account. Please try again." };
+        }
 
         const verificationLink = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify?token=${verificationToken}`;
 
         await sendVerificationEmail({
             to: validatedData.email,
             name: validatedData.fullName,
-            aetherId,
+            aetherId: newUser.AetherID,
             verificationLink,
         });
 
