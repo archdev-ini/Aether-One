@@ -1,3 +1,4 @@
+import { Resend } from 'resend';
 
 // This is a mock email service.
 // In a real application, you would use a service like Resend, SendGrid, or Nodemailer.
@@ -24,89 +25,127 @@ type RsvpConfirmationPayload = {
   eventLocation: string;
 }
 
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const fromEmail = process.env.EMAIL_FROM;
+
+const mockEmailLog = (type: string, payload: any) => {
+    console.log("====================================");
+    console.log(` MOCK EMAIL: ${type}`);
+    console.log("====================================");
+    console.log(`Recipient: ${payload.to}`);
+    console.log("Payload:", payload);
+    console.log("====================================");
+}
+
+
 export async function sendVerificationEmail(payload: VerificationEmailPayload) {
+  if (!resend || !fromEmail) {
+      mockEmailLog('Verification', payload);
+      console.warn("Resend is not configured. Using mock email log.");
+      return { success: true };
+  }
+
   const { to, name, aetherId, verificationLink } = payload;
+  const subject = "Activate Your Aether ID 🌍";
+  const htmlBody = `
+    <div style="font-family: sans-serif; line-height: 1.6;">
+      <h2>Hi ${name},</h2>
+      <p>Welcome to the Aether Ecosystem! 🎉</p>
+      <p>Your unique Aether ID is: <strong>${aetherId}</strong>.</p>
+      <p>Please click the button below to activate your account and join the community:</p>
+      <a href="${verificationLink}" style="background-color: #663399; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Activate My Aether ID</a>
+      <p>If you didn’t request this, please ignore this email.</p>
+      <p>Best,<br/>The Aether Team</p>
+    </div>
+  `;
 
-  console.log("====================================");
-  console.log(" MOCK EMAIL: Sending Verification   ");
-  console.log("====================================");
-  console.log(`Recipient: ${to}`);
-  console.log(`Subject: Activate Your Aether ID 🌍`);
-  console.log("--- Body ---");
-  console.log(`Hi ${name},`);
-  console.log(``);
-  console.log(`Welcome to the Aether Ecosystem! 🎉`);
-  console.log(`Your unique Aether ID is: ${aetherId}.`);
-  console.log(``);
-  console.log(`Click the button below to activate your account:`);
-  console.log(`[Activate My Aether ID] -> ${verificationLink}`);
-  console.log(``);
-  console.log(`If you didn’t request this, please ignore.`);
-  console.log("====================================");
-
-  // In a real service, you would have error handling here.
-  // For the mock, we'll just assume it always succeeds.
-  return { success: true };
+  try {
+      await resend.emails.send({
+          from: fromEmail,
+          to: to,
+          subject: subject,
+          html: htmlBody,
+      });
+      return { success: true };
+  } catch (error) {
+      console.error("Error sending verification email via Resend:", error);
+      return { success: false, message: "Could not send verification email." };
+  }
 }
 
 
 export async function sendLoginEmail(payload: LoginEmailPayload) {
+  if (!resend || !fromEmail) {
+      mockEmailLog('Login', payload);
+      console.warn("Resend is not configured. Using mock email log.");
+      return { success: true };
+  }
+  
   const { to, name, loginLink } = payload;
+  const subject = "Sign in to Aether 🔑";
+  const htmlBody = `
+     <div style="font-family: sans-serif; line-height: 1.6;">
+      <h2>Hi ${name},</h2>
+      <p>Click the button below to sign in to your Aether account:</p>
+      <a href="${loginLink}" style="background-color: #663399; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Sign In to Aether</a>
+      <p>This link will expire in 15 minutes.</p>
+      <p>If you didn’t request this, please ignore this email.</p>
+      <p>Best,<br/>The Aether Team</p>
+    </div>
+  `;
 
-  console.log("====================================");
-  console.log(" MOCK EMAIL: Sending Login Link     ");
-  console.log("====================================");
-  console.log(`Recipient: ${to}`);
-  console.log(`Subject: Sign in to Aether 🔑`);
-  console.log("--- Body ---");
-  console.log(`Hi ${name},`);
-  console.log(``);
-  console.log(`Click the button below to sign in to your Aether account:`);
-  console.log(`[Sign In] -> ${loginLink}`);
-  console.log(``);
-  console.log(`This link will expire in 15 minutes.`);
-  console.log(`If you didn’t request this, please ignore.`);
-  console.log("====================================");
-
-  return { success: true };
+   try {
+      await resend.emails.send({
+          from: fromEmail,
+          to: to,
+          subject: subject,
+          html: htmlBody,
+      });
+      return { success: true };
+  } catch (error) {
+      console.error("Error sending login email via Resend:", error);
+      return { success: false, message: "Could not send login email." };
+  }
 }
 
 export async function sendRsvpConfirmationEmail(payload: RsvpConfirmationPayload) {
-  const { to, name, eventName, eventDate, eventPlatform, eventLocation } = payload;
+  if (!resend || !fromEmail) {
+      mockEmailLog('RSVP Confirmation', payload);
+      console.warn("Resend is not configured. Using mock email log.");
+      return { success: true };
+  }
 
+  const { to, name, eventName, eventDate, eventPlatform, eventLocation } = payload;
   const formattedDate = eventDate.toLocaleString(undefined, {
     dateStyle: 'full',
     timeStyle: 'short',
   });
 
-  // Basic "Add to Calendar" link generator
-  const createCalendarLink = () => {
-    const startTime = eventDate.toISOString().replace(/-|:|\.\d\d\d/g, "");
-    const endTime = new Date(eventDate.getTime() + (60 * 60 * 1000)).toISOString().replace(/-|:|\.\d\d\d/g, ""); // Assume 1 hour duration
-    const details = `Join the Aether event: ${eventName} on ${eventPlatform}.`;
-    
-    return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventName)}&dates=${startTime}/${endTime}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(`${eventPlatform} (${eventLocation})`)}`;
+  const subject = `You're confirmed for ${eventName} 🎉`;
+  const htmlBody = `
+     <div style="font-family: sans-serif; line-height: 1.6;">
+      <h2>Hi ${name},</h2>
+      <p>This email confirms your spot for <strong>${eventName}</strong>. We're excited to see you there!</p>
+      <h3>Event Details:</h3>
+      <ul>
+        <li><strong>Date & Time:</strong> ${formattedDate}</li>
+        <li><strong>Platform:</strong> ${eventPlatform} (${eventLocation})</li>
+      </ul>
+      <p>We'll send a reminder with the direct link closer to the event date.</p>
+      <p>Best,<br/>The Aether Team</p>
+    </div>
+  `;
+
+  try {
+      await resend.emails.send({
+          from: fromEmail,
+          to: to,
+          subject: subject,
+          html: htmlBody,
+      });
+      return { success: true };
+  } catch (error) {
+      console.error("Error sending RSVP email via Resend:", error);
+      return { success: false, message: "Could not send RSVP confirmation." };
   }
-  
-  const calendarLink = createCalendarLink();
-
-  console.log("====================================");
-  console.log(" MOCK EMAIL: Sending RSVP Confirmation");
-  console.log("====================================");
-  console.log(`Recipient: ${to}`);
-  console.log(`Subject: You're confirmed for ${eventName} 🎉`);
-  console.log("--- Body ---");
-  console.log(`Hi ${name},`);
-  console.log(``);
-  console.log(`This email confirms your spot for ${eventName}. We're excited to see you there!`);
-  console.log(``);
-  console.log(`Event Details:`);
-  console.log(`- Date & Time: ${formattedDate}`);
-  console.log(`- Platform: ${eventPlatform} (${eventLocation})`);
-  console.log(``);
-  console.log(`[Add to Calendar] -> ${calendarLink}`);
-  console.log(``);
-  console.log("====================================");
-
-  return { success: true };
 }
