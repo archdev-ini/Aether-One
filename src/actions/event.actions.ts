@@ -6,17 +6,18 @@ import { db } from "@/services/airtable";
 import { sendRsvpConfirmationEmail } from "@/services/email";
 import { mockEvents } from "@/app/events/data";
 
-export const rsvpFormSchema = z.object({
-  eventCode: z.string(),
-  fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  aetherId: z.string().optional(),
-  cityCountry: z.string().optional(),
-  preferredPlatform: z.string({ required_error: "Please select your preferred platform." }),
-  interest: z.string().optional(),
-});
+// This is defined in RsvpDialog.tsx now to avoid the "use server" export error.
+type RsvpFormValues = {
+  eventCode: string;
+  fullName: string;
+  email: string;
+  aetherId?: string;
+  cityCountry?: string;
+  preferredPlatform: string;
+  interest?: string;
+};
 
-export async function submitRsvp(values: z.infer<typeof rsvpFormSchema>) {
+export async function submitRsvp(values: RsvpFormValues) {
     console.log("====================================");
     console.log(" MOCK RSVP SUBMISSION TO AIRTABLE   ");
     console.log("====================================");

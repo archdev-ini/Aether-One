@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import { rsvpFormSchema, submitRsvp } from "@/actions/event.actions";
+import { submitRsvp } from "@/actions/event.actions";
 
 type User = {
   FullName: string;
@@ -36,6 +36,17 @@ interface RsvpDialogProps {
   eventCode: string;
   user: User | null;
 }
+
+const rsvpFormSchema = z.object({
+  eventCode: z.string(),
+  fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  aetherId: z.string().optional(),
+  cityCountry: z.string().optional(),
+  preferredPlatform: z.string({ required_error: "Please select your preferred platform." }),
+  interest: z.string().optional(),
+});
+
 
 export function RsvpDialog({ eventTitle, eventCode, user }: RsvpDialogProps) {
   const { toast } = useToast();
