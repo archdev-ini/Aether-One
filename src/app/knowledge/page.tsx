@@ -2,31 +2,68 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Resource } from "./data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, ExternalLink, Lock, Search } from "lucide-react";
+import { BookOpen, ExternalLink, Lock, Search, ServerCrash } from "lucide-react";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { db } from "@/services/airtable";
+import type { Resource } from "@/services/airtable";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const categories = ["All Categories", "Architecture & Design", "Technology & Web3", "Community & Leadership", "Aether Insights"];
 const resourceTypes = ["All Types", "Article", "Video", "PDF", "Tool", "Course"];
+
+function ResourceCardSkeleton() {
+    return (
+        <Card className="flex flex-col overflow-hidden">
+            <CardHeader>
+                <Skeleton className="h-6 w-3/4 mb-2" />
+                <Skeleton className="h-4 w-1/4" />
+            </CardHeader>
+            <CardContent className="flex-grow flex flex-col justify-between">
+                <div className="space-y-2 mb-4">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                </div>
+                <div>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        <Skeleton className="h-6 w-24 rounded-full" />
+                        <Skeleton className="h-6 w-16 rounded-full" />
+                    </div>
+                    <Skeleton className="h-10 w-full" />
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
 
 export default function KnowledgePage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("All Categories");
     const [typeFilter, setTypeFilter] = useState("All Types");
     const [resources, setResources] = useState<Resource[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchResources = async () => {
-            const allResources = await db.getResources();
-            setResources(allResources);
-        }
+            setLoading(true);
+            setError(null);
+            try {
+                const allResources = await db.getResources();
+                setResources(allResources);
+            } catch (err) {
+                setError("Failed to load resources. Please try again later.");
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
         fetchResources();
     }, []);
 
@@ -95,55 +132,64 @@ export default function KnowledgePage() {
 
                     {/* Resources Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {filteredResources.map(resource => (
-                           <Card key={resource.id} className="flex flex-col overflow-hidden transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
-                               <CardHeader>
-                                    <div className="flex justify-between items-start">
-                                        <div className="flex-grow">
-                                            <CardTitle className="text-xl line-clamp-2">{resource.title}</CardTitle>
-                                             <p className="text-sm text-muted-foreground mt-1">by {resource.author}</p>
+                        {loading ? (
+                             Array.from({ length: 6 }).map((_, i) => <ResourceCardSkeleton key={i} />)
+                        ) : error ? (
+                            <div className="col-span-full text-center py-16 text-destructive">
+                                <ServerCrash className="h-12 w-12 mx-auto mb-4" />
+                                <h3 className="text-xl font-semibold">Could not load resources</h3>
+                                <p>{error}</p>
+                            </div>
+                        ) : filteredResources.length > 0 ? (
+                            filteredResources.map(resource => (
+                               <Card key={resource.id} className="flex flex-col overflow-hidden transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
+                                   <CardHeader>
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex-grow">
+                                                <CardTitle className="text-xl line-clamp-2">{resource.title}</CardTitle>
+                                                 <p className="text-sm text-muted-foreground mt-1">by {resource.author}</p>
+                                            </div>
+                                            {resource.access === 'Members-only' && (
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger>
+                                                            <Lock className="h-5 w-5 text-primary ml-2 shrink-0" />
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            <p>Members-only</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            )}
                                         </div>
-                                        {resource.access === 'Members-only' && (
-                                            <TooltipProvider>
-                                                <Tooltip>
-                                                    <TooltipTrigger>
-                                                        <Lock className="h-5 w-5 text-primary ml-2 shrink-0" />
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>
-                                                        <p>Members-only</p>
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>
-                                        )}
-                                    </div>
-                               </CardHeader>
-                               <CardContent className="flex-grow flex flex-col justify-between">
-                                    <p className="text-foreground/80 line-clamp-3 mb-4">{resource.description}</p>
-                                    <div>
-                                        <div className="flex flex-wrap gap-2 mb-4">
-                                            <Badge variant="secondary">{resource.category}</Badge>
-                                            <Badge variant="outline">{resource.type}</Badge>
-                                            {resource.tags.map(tag => (
-                                                <Badge key={tag} variant="outline">{tag}</Badge>
-                                            ))}
+                                   </CardHeader>
+                                   <CardContent className="flex-grow flex flex-col justify-between">
+                                        <p className="text-foreground/80 line-clamp-3 mb-4">{resource.description}</p>
+                                        <div>
+                                            <div className="flex flex-wrap gap-2 mb-4">
+                                                <Badge variant="secondary">{resource.category}</Badge>
+                                                <Badge variant="outline">{resource.type}</Badge>
+                                                {resource.tags.map(tag => (
+                                                    <Badge key={tag} variant="outline">{tag}</Badge>
+                                                ))}
+                                            </div>
+                                            <Button asChild className="w-full">
+                                                <Link href={resource.link} target="_blank" rel="noopener noreferrer">
+                                                    Open Resource <ExternalLink className="ml-2 h-4 w-4" />
+                                                </Link>
+                                            </Button>
                                         </div>
-                                        <Button asChild className="w-full">
-                                            <Link href={resource.link} target="_blank" rel="noopener noreferrer">
-                                                Open Resource <ExternalLink className="ml-2 h-4 w-4" />
-                                            </Link>
-                                        </Button>
-                                    </div>
-                               </CardContent>
-                           </Card>
-                        ))}
+                                   </CardContent>
+                               </Card>
+                            ))
+                        ) : (
+                            <div className="text-center col-span-full py-16 text-muted-foreground">
+                                <BookOpen className="h-12 w-12 mx-auto mb-4" />
+                                <h3 className="text-xl font-semibold">No Resources Found</h3>
+                                <p>Try adjusting your search or filters.</p>
+                            </div>
+                        )}
                     </div>
-                    {filteredResources.length === 0 && (
-                        <div className="text-center col-span-full py-16 text-muted-foreground">
-                            <BookOpen className="h-12 w-12 mx-auto mb-4" />
-                            <h3 className="text-xl font-semibold">No Resources Found</h3>
-                            <p>Try adjusting your search or filters.</p>
-                        </div>
-                    )}
                 </div>
             </section>
         </div>

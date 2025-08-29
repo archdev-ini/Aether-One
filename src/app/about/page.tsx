@@ -1,6 +1,6 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Eye, Target, Heart, Leaf, Handshake, Globe, Search, Lightbulb } from "lucide-react";
+import { Eye, Target, Heart, Leaf, Handshake, Globe, Search, Lightbulb, ServerCrash } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,16 @@ const values = [
     }
 ];
 
+function ErrorDisplay({ title, message }: { title: string, message: string }) {
+    return (
+        <div className="text-center text-destructive bg-destructive/10 py-8 px-4 rounded-lg">
+            <ServerCrash className="h-10 w-10 mx-auto mb-4" />
+            <h3 className="text-xl font-bold">{title}</h3>
+            <p className="text-destructive/80">{message}</p>
+        </div>
+    );
+}
+
 export default async function AboutPage() {
     const aboutContent = await db.getAboutPageContent();
 
@@ -71,11 +81,15 @@ export default async function AboutPage() {
                      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-center">
                         <div className="space-y-4">
                             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Our Story</h2>
-                            <div className="text-lg text-foreground/70 space-y-4 whitespace-pre-wrap">
-                                {aboutContent?.story.split('\n\n').map((paragraph, index) => (
-                                    <p key={index}>{paragraph}</p>
-                                ))}
-                            </div>
+                            {aboutContent?.story ? (
+                                <div className="text-lg text-foreground/70 space-y-4 whitespace-pre-wrap">
+                                    {aboutContent.story.split('\n\n').map((paragraph, index) => (
+                                        <p key={index}>{paragraph}</p>
+                                    ))}
+                                </div>
+                            ) : (
+                                <ErrorDisplay title="Content Not Available" message="The story content could not be loaded at this time."/>
+                            )}
                         </div>
                         <div className="relative aspect-video rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105">
                              <Image
@@ -104,11 +118,15 @@ export default async function AboutPage() {
                         </div>
                         <div className="space-y-4 md:order-1">
                             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-primary">Our Vision</h2>
-                            <div className="text-lg text-foreground/70 space-y-4 whitespace-pre-wrap">
-                               {aboutContent?.vision.split('\n\n').map((paragraph, index) => (
-                                    <p key={index}>{paragraph}</p>
-                                ))}
-                            </div>
+                             {aboutContent?.vision ? (
+                                <div className="text-lg text-foreground/70 space-y-4 whitespace-pre-wrap">
+                                   {aboutContent.vision.split('\n\n').map((paragraph, index) => (
+                                        <p key={index}>{paragraph}</p>
+                                    ))}
+                                </div>
+                             ) : (
+                                <ErrorDisplay title="Content Not Available" message="The vision content could not be loaded at this time."/>
+                             )}
                         </div>
                     </div>
                 </div>

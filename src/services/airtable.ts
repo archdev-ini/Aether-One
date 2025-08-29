@@ -1,10 +1,8 @@
 
 import Airtable, { FieldSet, Record, Records } from 'airtable';
-import type { Event } from '@/app/events/data';
-import type { Resource } from '@/app/knowledge/data';
-import type { UpdatePost } from '@/app/updates/data';
 
-type User = {
+// Type definitions moved here to be accessible by other parts of the app
+export type User = {
     airtableId?: string;
     AetherID: string;
     FullName: string;
@@ -23,10 +21,63 @@ type User = {
     ActivatedAt?: Date | null;
 };
 
+export type Event = {
+    airtableId: string;
+    code: string;
+    title: string;
+    date: string;
+    type: "Talk" | "Workshop" | "Challenge" | "Meetup";
+    focus: "Architecture" | "AI in Design" | "Web3" | "Computational Design" | "Sustainable Architecture" | "General";
+    description: string;
+    image: string;
+    aiHint: string;
+    platform: string;
+    location: string;
+    longDescription: string;
+    speakers: {
+        name: string;
+        title: string;
+        bio: string;
+        avatar: string;
+    }[];
+    agenda: {
+        time: string;
+        topic: string;
+    }[] | null;
+    whatToExpect?: string[];
+    whyAttend?: {
+        students: string;
+        professionals: string;
+    };
+};
+
+export type Resource = {
+    id: string;
+    title: string;
+    category: "Architecture & Design" | "Technology & Web3" | "Community & Leadership" | "Aether Insights";
+    type: "Article" | "Video" | "PDF" | "Tool" | "Course";
+    author: string;
+    tags: string[];
+    link: string;
+    access: 'Public' | 'Members-only';
+    dateAdded: string;
+    description: string;
+};
+
+export type UpdatePost = {
+    id: string;
+    title: string;
+    date: string;
+    excerpt: string;
+    category: 'Update' | 'Opportunity' | 'Event' | 'Release';
+    link: string;
+};
+
+
 type RsvpPayload = {
-    'Event': string[], 
-    'User'?: string[], 
-    'Notes'?: string,
+    'fldejTBGYZV2zwMaH': string[], 
+    'fldkyFvyFq2p40Prz'?: string[], 
+    'fldIVjDRve03JrSf1': 'Registered',
 }
 
 type SupportRequestPayload = {
@@ -56,11 +107,10 @@ async function fetchAllRecords<T extends FieldSet>(tableId: string): Promise<Rec
     try {
         const table = base(tableId);
         const records = await table.select().all();
-        console.log(`[Airtable] Fetched ${records.length} records from table ${tableId}`);
         return records;
     } catch (error) {
         console.error(`[Airtable] Error fetching from table ${tableId}:`, error);
-        return [];
+        throw error;
     }
 }
 
@@ -273,10 +323,14 @@ export const db = {
     },
 
     // RSVP / EVENT FUNCTIONS
-    async createRsvp(rsvpData: RsvpPayload): Promise<void> {
+    async createRsvp(rsvpData: Omit<RsvpPayload, 'fldIVjDRve03JrSf1'>): Promise<void> {
         if (!base) throw new Error("Airtable not configured");
         try {
-            await base('tblzZ5tXPYQaavzEJ').create([{ fields: rsvpData }]);
+            const payload: RsvpPayload = {
+                ...rsvpData,
+                'fldIVjDRve03JrSf1': 'Registered'
+            }
+            await base('tblzZ5tXPYQaavzEJ').create([{ fields: payload }]);
         } catch (error) {
              console.error(`[Airtable] Error creating RSVP:`, error);
              throw error;
@@ -322,14 +376,12 @@ export const db = {
 
     // KNOWLEDGE HUB FUNCTIONS
     async getResources(): Promise<Resource[]> {
-        if (!base) return [];
         const records = await fetchAllRecords<FieldSet>('tblPE0SNXLuWanfIk');
         return records.map(mapRecordToResource);
     },
 
     // UPDATES FEED FUNCTIONS
     async getUpdates(): Promise<UpdatePost[]> {
-        if (!base) return [];
         const records = await fetchAllRecords<FieldSet>('tblS2uYs8YwWEphLP');
         return records.map(mapRecordToUpdate);
     },
@@ -349,7 +401,7 @@ export const db = {
             return null;
         } catch (error) {
             console.error(`[Airtable] Error fetching About page content:`, error);
-            return { story: 'Error loading story.', vision: 'Error loading vision.' };
+            return null; // Return null on error to be handled by the page
         }
     },
 
@@ -368,5 +420,3 @@ export const db = {
         }
     }
 };
-
-    

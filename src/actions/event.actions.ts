@@ -15,51 +15,44 @@ type RsvpFormValues = {
 };
 
 export async function submitRsvp(values: RsvpFormValues) {
-    console.log("====================================");
-    console.log("   RSVP SUBMISSION TO AIRTABLE      ");
-    console.log("====================================");
-    
-    const event = await db.getEventByCode(values.eventCode);
-    if (!event || !event.airtableId) {
-        return { success: false, message: "This event could not be found." };
+    try {
+        const event = await db.getEventByCode(values.eventCode);
+        if (!event || !event.airtableId) {
+            return { success: false, message: "This event could not be found." };
+        }
+
+        let user;
+        if (values.aetherId) {
+            user = await db.findUserById(values.aetherId);
+        }
+
+        // Even if there's no logged-in user, we might find an existing user by email
+        if (!user) {
+            user = await db.findUserByEmail(values.email);
+        }
+        
+        const rsvpRecord = {
+            'fldejTBGYZV2zwMaH': [event.airtableId], // Link to the event record
+            'fldkyFvyFq2p40Prz': user && user.airtableId ? [user.airtableId] : undefined, // Link to user if they exist
+            // No 'Notes' field in the provided schema for Event Registrations
+        };
+        
+        await db.createRsvp(rsvpRecord);
+
+        if (event) {
+            await sendRsvpConfirmationEmail({
+                to: values.email,
+                name: values.fullName,
+                eventName: event.title,
+                eventDate: new Date(event.date),
+                eventPlatform: event.platform,
+                eventLocation: event.location,
+            });
+        }
+
+        return { success: true, message: "Your spot has been reserved!" };
+    } catch (error) {
+        console.error("Error submitting RSVP:", error);
+        return { success: false, message: "An unexpected error occurred while reserving your spot." };
     }
-
-    let user;
-    if (values.aetherId) {
-        user = await db.findUserById(values.aetherId);
-    }
-
-    // Even if there's no logged-in user, we might find an existing user by email
-    if (!user) {
-        user = await db.findUserByEmail(values.email);
-    }
-    
-    const rsvpRecord = {
-        'Event': [event.airtableId], // Link to the event record
-        'User': user && user.airtableId ? [user.airtableId] : undefined, // Link to user if they exist
-        'Notes': values.interest,
-        // The form now only collects interest, name and email are derived or entered.
-        // Status and Registration Date are handled by Airtable.
-    };
-    
-    console.log("Record to be saved to 'Event Registrations' table:");
-    console.log(rsvpRecord);
-    
-    await db.createRsvp(rsvpRecord);
-
-    console.log("====================================");
-
-
-    if (event) {
-        await sendRsvpConfirmationEmail({
-            to: values.email,
-            name: values.fullName,
-            eventName: event.title,
-            eventDate: new Date(event.date),
-            eventPlatform: event.platform,
-            eventLocation: event.location,
-        });
-    }
-
-    return { success: true, message: "Your spot has been reserved!" };
 }
