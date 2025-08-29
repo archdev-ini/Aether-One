@@ -15,8 +15,8 @@ export type User = {
     SocialHandle?: string;
     Goals?: string;
     IsActivated: boolean;
-    VerificationToken: string;
-    VerificationTokenExpires: Date;
+    VerificationToken?: string | null;
+    VerificationTokenExpires?: Date;
     CreatedAt?: Date;
     ActivatedAt?: Date | null;
 };
@@ -91,6 +91,20 @@ type SupportRequestPayload = {
 type AboutContent = {
     story: string;
     vision: string;
+}
+
+type NewUserPayload = {
+    FullName: string;
+    Email: string;
+    IsActivated: boolean;
+    CityCountry: string;
+    AgeRange: string;
+    CurrentRole: string;
+    MainInterest: string;
+    PreferredCommunityPlatform: string;
+    SocialHandle?: string;
+    Goals?: string;
+    VerificationToken?: string | null;
 }
 
 
@@ -254,7 +268,7 @@ export const db = {
         }
     },
 
-    async createUser(userData: Omit<User, 'CreatedAt' | 'ActivatedAt' | 'AetherID' | 'airtableId'>): Promise<User | null> {
+    async createUser(userData: NewUserPayload): Promise<User | null> {
          if (!base) return null;
         try {
             const record = await base('tbl2Q9DdVCmKFKHnt').create([
@@ -269,7 +283,7 @@ export const db = {
                         'fldpL0ntu6jlFPZ8P': [userData.PreferredCommunityPlatform],
                         'fld1xxrWwFQ3B3Azn': userData.SocialHandle,
                         'fldK7jPkvMehvA6XX': userData.Goals,
-                        'fldZmHeRYwkkqrsOG': 'Pending',
+                        'fldZmHeRYwkkqrsOG': userData.IsActivated ? 'Active' : 'Pending',
                         'fldEhutDpQHkfxRqf': userData.VerificationToken
                     }
                 }
