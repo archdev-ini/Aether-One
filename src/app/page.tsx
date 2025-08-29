@@ -1,20 +1,23 @@
 
 import { Button } from '@/components/ui/button';
-import { BookOpen, ToyBrick, Users } from 'lucide-react';
+import { BookOpen, ToyBrick, Users, ServerCrash, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { UpdatesFeed } from '@/components/UpdatesFeed';
 import { db } from '@/services/airtable';
-import { ArrowRight } from 'lucide-react';
+import type { UpdatePost } from '@/services/airtable';
 
 export default async function Home() {
-  const allEvents = await db.getEvents();
-  const upcomingEvents = allEvents
-    .filter(event => new Date(event.date) > new Date())
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  let updates: UpdatePost[] = [];
+  let fetchError: string | null = null;
 
-  const featuredEvent = upcomingEvents.length > 0 ? upcomingEvents[0] : null;
+  try {
+    updates = await db.getUpdates();
+  } catch (error) {
+    console.error("Failed to fetch updates for homepage:", error);
+    fetchError = "Could not load the latest updates. Please ensure your Airtable API key is configured correctly.";
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -88,7 +91,7 @@ export default async function Home() {
                         Explore the latest news, events, and opportunities from the ecosystem.
                     </p>
                 </div>
-                <UpdatesFeed />
+                <UpdatesFeed initialPosts={updates} initialError={fetchError} />
                  <div className="text-center mt-12">
                     <Button asChild size="lg">
                         <Link href="#">Subscribe on Substack</Link>

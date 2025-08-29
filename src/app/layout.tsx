@@ -18,12 +18,12 @@ export const metadata: Metadata = {
   description: 'The future of digital design education and community, built for aspiring architects and designers.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const name = cookieStore.get('aether_user_name')?.value;
   const id = cookieStore.get('aether_user_id')?.value;
   const user = name && id ? { name, id } : null;

@@ -9,7 +9,6 @@ import { ArrowRight, ServerCrash } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { db } from "@/services/airtable";
 import { Skeleton } from "./ui/skeleton";
 
 const categoryStyles = {
@@ -51,35 +50,14 @@ function UpdateCardSkeleton() {
     )
 }
 
-export function UpdatesFeed() {
-    const [posts, setPosts] = useState<UpdatePost[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+interface UpdatesFeedProps {
+    initialPosts: UpdatePost[];
+    initialError: string | null;
+}
 
-    useEffect(() => {
-        const fetchUpdates = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const allUpdates = await db.getUpdates();
-                setPosts(allUpdates);
-            } catch(err) {
-                setError("Could not load latest updates.");
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchUpdates();
-    }, []);
-
-    if (loading) {
-        return (
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {Array.from({ length: 3 }).map((_, i) => <UpdateCardSkeleton key={i} />)}
-            </div>
-        )
-    }
+export function UpdatesFeed({ initialPosts, initialError }: UpdatesFeedProps) {
+    const [posts] = useState<UpdatePost[]>(initialPosts);
+    const [error] = useState<string | null>(initialError);
 
     if (error) {
          return (
@@ -87,6 +65,14 @@ export function UpdatesFeed() {
                 <ServerCrash className="h-12 w-12 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold">Could not load updates</h3>
                 <p>{error}</p>
+            </div>
+        )
+    }
+
+    if (posts.length === 0) {
+        return (
+             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, i) => <UpdateCardSkeleton key={i} />)}
             </div>
         )
     }
