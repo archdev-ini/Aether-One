@@ -50,7 +50,7 @@ export default async function ProfilePage() {
                     </p>
                     <div className="flex justify-center gap-4">
                         <Button asChild>
-                            <Link href="/programs">Explore Programs</Link>
+                            <Link href="/events">Explore Events</Link>
                         </Button>
                          <Button asChild variant="outline">
                             <Link href="/">Back to Home</Link>

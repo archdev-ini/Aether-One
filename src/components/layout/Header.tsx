@@ -20,9 +20,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
 const navLinks = [
-  { href: '/programs', label: 'Programs' },
-  { href: '/knowledge', label: 'Knowledge' },
   { href: '/events', label: 'Events' },
+  { href: '/knowledge', label: 'Knowledge' },
   { href: '/about', label: 'About' },
   { href: '/faq', label: 'FAQ' },
 ];
