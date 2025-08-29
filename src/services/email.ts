@@ -1,7 +1,7 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
 // This is a mock email service.
-// In a real application, you would use a service like Resend, SendGrid, or Nodemailer.
+// In a real application, you would use a service like Nodemailer with SMTP credentials.
 
 type VerificationEmailPayload = {
   to: string;
@@ -25,8 +25,23 @@ type RsvpConfirmationPayload = {
   eventLocation: string;
 }
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
-const fromEmail = process.env.EMAIL_FROM;
+const transporter = (
+    process.env.SMTP_HOST && 
+    process.env.SMTP_PORT &&
+    process.env.SMTP_USER &&
+    process.env.SMTP_PASS
+) ? nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT),
+    secure: parseInt(process.env.SMTP_PORT) === 465, // true for 465, false for other ports
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+}) : null;
+
+const fromEmail = process.env.EMAIL_FROM || 'noreply@aether.xyz';
+
 
 const mockEmailLog = (type: string, payload: any) => {
     console.log("====================================");
@@ -39,9 +54,9 @@ const mockEmailLog = (type: string, payload: any) => {
 
 
 export async function sendVerificationEmail(payload: VerificationEmailPayload) {
-  if (!resend || !fromEmail) {
+  if (!transporter) {
       mockEmailLog('Verification', payload);
-      console.warn("Resend is not configured. Using mock email log.");
+      console.warn("Nodemailer is not configured. Using mock email log.");
       return { success: true };
   }
 
@@ -60,7 +75,7 @@ export async function sendVerificationEmail(payload: VerificationEmailPayload) {
   `;
 
   try {
-      await resend.emails.send({
+      await transporter.sendMail({
           from: fromEmail,
           to: to,
           subject: subject,
@@ -68,16 +83,16 @@ export async function sendVerificationEmail(payload: VerificationEmailPayload) {
       });
       return { success: true };
   } catch (error) {
-      console.error("Error sending verification email via Resend:", error);
+      console.error("Error sending verification email via Nodemailer:", error);
       return { success: false, message: "Could not send verification email." };
   }
 }
 
 
 export async function sendLoginEmail(payload: LoginEmailPayload) {
-  if (!resend || !fromEmail) {
+  if (!transporter) {
       mockEmailLog('Login', payload);
-      console.warn("Resend is not configured. Using mock email log.");
+      console.warn("Nodemailer is not configured. Using mock email log.");
       return { success: true };
   }
   
@@ -95,7 +110,7 @@ export async function sendLoginEmail(payload: LoginEmailPayload) {
   `;
 
    try {
-      await resend.emails.send({
+      await transporter.sendMail({
           from: fromEmail,
           to: to,
           subject: subject,
@@ -103,15 +118,15 @@ export async function sendLoginEmail(payload: LoginEmailPayload) {
       });
       return { success: true };
   } catch (error) {
-      console.error("Error sending login email via Resend:", error);
+      console.error("Error sending login email via Nodemailer:", error);
       return { success: false, message: "Could not send login email." };
   }
 }
 
 export async function sendRsvpConfirmationEmail(payload: RsvpConfirmationPayload) {
-  if (!resend || !fromEmail) {
+  if (!transporter) {
       mockEmailLog('RSVP Confirmation', payload);
-      console.warn("Resend is not configured. Using mock email log.");
+      console.warn("Nodemailer is not configured. Using mock email log.");
       return { success: true };
   }
 
@@ -137,15 +152,16 @@ export async function sendRsvpConfirmationEmail(payload: RsvpConfirmationPayload
   `;
 
   try {
-      await resend.emails.send({
+      await transporter.sendMail({
           from: fromEmail,
           to: to,
           subject: subject,
           html: htmlBody,
       });
       return { success: true };
-  } catch (error) {
-      console.error("Error sending RSVP email via Resend:", error);
+  } catch (error)
+ {
+      console.error("Error sending RSVP email via Nodemailer:", error);
       return { success: false, message: "Could not send RSVP confirmation." };
   }
 }
