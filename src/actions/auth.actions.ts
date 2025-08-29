@@ -98,13 +98,13 @@ export async function verifyTokenAndLogin(token: string) {
             path: '/',
         });
 
+        // The redirect is handled on the page to allow for callbackUrl
+        return { success: true };
+
     } catch (error) {
         console.error('Verification Error:', error);
         return { success: false, message: 'An unexpected error occurred during verification.' };
     }
-
-    // Redirect to profile page after successful verification
-    redirect('/profile');
 }
 
 

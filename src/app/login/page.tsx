@@ -14,6 +14,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { sendLoginLink } from "@/actions/auth.actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 
 const formSchema = z.object({
@@ -22,6 +24,8 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const { toast } = useToast();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionMessage, setSubmissionMessage] = useState<string | null>(null);
 
@@ -66,6 +70,11 @@ export default function LoginPage() {
                     <CardTitle className="text-3xl font-headline text-center">Member Login</CardTitle>
                     <CardDescription className="text-center">
                         Enter your email to receive a magic link to sign in.
+                         <br />
+                        Don't have an account?{" "}
+                        <Link href={`/join${callbackUrl ? `?callbackUrl=${callbackUrl}`: ''}`} className="text-primary hover:underline">
+                            Create an Aether ID
+                        </Link>
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -106,3 +115,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

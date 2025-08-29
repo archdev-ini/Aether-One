@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Calendar, Clock, MapPin, Users } from "lucide-react";
+import { Calendar, Clock, Lock, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { cookies } from "next/headers";
 import { db } from "@/services/airtable";
 import { RsvpDialog } from "@/components/events/RsvpDialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface EventDetailPageProps {
     params: {
@@ -143,7 +144,23 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                     <aside className="lg:col-span-1">
                         <Card className="sticky top-24">
                             <CardHeader>
-                                <RsvpDialog eventTitle={event.title} eventCode={event.code} user={user} />
+                                {user ? (
+                                    <RsvpDialog eventTitle={event.title} eventCode={event.code} user={user} />
+                                ) : (
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger className="w-full">
+                                                <Button size="lg" className="w-full" disabled>
+                                                    <Lock className="mr-2 h-4 w-4" />
+                                                    Login to RSVP
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>You must be signed in to reserve a spot.</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                )}
                                 <p className="text-center text-sm text-muted-foreground mt-2">Secure your spot!</p>
                             </CardHeader>
                             <CardContent className="space-y-4 text-sm">

@@ -17,6 +17,7 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { createUser } from "@/actions/auth.actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useSearchParams } from "next/navigation";
 
 
 const formSchema = z.object({
@@ -33,6 +34,8 @@ const formSchema = z.object({
 
 export default function JoinPage() {
   const { toast } = useToast();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionMessage, setSubmissionMessage] = useState<{title: string, description: React.ReactNode} | null>(null);
 
@@ -90,7 +93,11 @@ export default function JoinPage() {
                 <CardHeader>
                     <CardTitle className="text-3xl font-headline">Get Your Aether ID</CardTitle>
                     <CardDescription>
-                        Fill out this form to receive your unique Aether ID. Check your email to activate your profile and unlock the Aether Ecosystem—courses, community, challenges, and more.
+                        Fill out this form to unlock the Aether Ecosystem. Already have an ID?{" "}
+                         <Link href={`/login${callbackUrl ? `?callbackUrl=${callbackUrl}`: ''}`} className="text-primary hover:underline">
+                            Sign in here
+                        </Link>
+                        .
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
