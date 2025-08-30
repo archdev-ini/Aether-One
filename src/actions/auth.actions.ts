@@ -200,3 +200,25 @@ export async function sendLoginLink(email: string) {
     return handleAirtableError(error);
   }
 }
+
+export async function getUserForProfile() {
+    try {
+        const userId = cookies().get('aether_user_id')?.value;
+
+        if (!userId) {
+            return { success: false, message: "User not authenticated." };
+        }
+
+        const user = await db.findUserById(userId);
+
+        if (!user) {
+            return { success: false, message: "User not found." };
+        }
+        
+        // Return a serializable user object
+        return { success: true, user: JSON.parse(JSON.stringify(user)) };
+
+    } catch (error) {
+        return handleAirtableError(error);
+    }
+}

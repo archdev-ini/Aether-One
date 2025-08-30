@@ -25,12 +25,10 @@ import {
 } from '@/components/ui/form';
 import {Input} from '@/components/ui/input';
 import {useToast} from '@/hooks/use-toast';
-import {updateUserProfile} from '@/actions/auth.actions';
+import {updateUserProfile, getUserForProfile} from '@/actions/auth.actions';
 import {Checkbox} from '@/components/ui/checkbox';
 import { useRouter } from 'next/navigation';
-import { db, User } from '@/services/airtable';
-import { useSession } from 'next-auth/react';
-import { getCookie } from 'cookies-next';
+import type { User } from '@/services/airtable';
 
 
 const profileFormSchema = z.object({
@@ -60,30 +58,30 @@ const interests = [
 
 
 export default function ProfilePage() {
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
     
-    // In a real app, you'd get this from a server component or an API call.
-    // For this client component, we'll assume the data is passed in or fetched.
     useEffect(() => {
         const fetchUser = async () => {
-            const email = getCookie('user_email'); // Assuming email is stored in a cookie
-            if (typeof email === 'string') {
-                // This is a placeholder for a proper API call
-                // In a real app, create an API endpoint to get user by email
-                // const response = await fetch(`/api/user?email=${email}`);
-                // const data = await response.json();
-                // setUser(data.user);
-                // For now, let's mock it
-                setUser({ email: email, name: getCookie('aether_user_name') || 'New User', IsActivated: false });
+            setLoading(true);
+            const userResult = await getUserForProfile();
+            if (userResult.success && userResult.user) {
+                setUser(userResult.user);
+            } else {
+                toast({
+                    variant: 'destructive',
+                    title: 'Authentication Error',
+                    description: 'Could not fetch your profile. Please log in again.',
+                });
+                router.push('/login');
             }
             setLoading(false);
         };
         fetchUser();
-    }, []);
+    }, [router, toast]);
 
 
     const form = useForm<z.infer<typeof profileFormSchema>>({
@@ -148,7 +146,11 @@ export default function ProfilePage() {
         return <div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>
     }
 
-    // This should be driven by user.IsActivated
+    if (!user) {
+        return null;
+    }
+    
+    // This is driven by user.IsActivated
     const isProfileComplete = user?.IsActivated || false; 
 
     return (
@@ -161,7 +163,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent>
                     <p>Welcome back to Aether! Your profile is complete.</p>
-                    <Button asChild className="mt-4" onClick={() => router.push('/')}>
+                    <Button className="mt-4" onClick={() => router.push('/')}>
                         Go to Homepage
                     </Button>
                 </CardContent>
