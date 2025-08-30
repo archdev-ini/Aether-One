@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { Inter } from 'next/font/google';
-import { AuthProvider } from '@/components/AuthProvider';
+import { cookies } from 'next/headers';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -24,6 +24,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = cookies();
+  const userName = cookieStore.get('aether_user_name')?.value;
+  const userId = cookieStore.get('aether_user_id')?.value;
+  
+  const user = userName && userId ? { name: userName, id: userId } : null;
   
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
@@ -33,21 +38,19 @@ export default async function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className={cn("font-sans antialiased min-h-screen flex flex-col", inter.variable)}>
-        <AuthProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
-            <Header />
+            <Header user={user} />
             <main className="flex-grow">
               {children}
             </main>
             <Footer />
             <Toaster />
           </ThemeProvider>
-        </AuthProvider>
       </body>
     </html>
   );

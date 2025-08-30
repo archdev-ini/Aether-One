@@ -60,10 +60,7 @@ export default function JoinPage() {
                 title: "Success! Check your email to activate your Aether ID.",
                 description: (
                     <p>
-                        We've sent a verification link to {values.email}. Didn't get it?{" "}
-                        <Link href="#" className="font-semibold text-primary hover:underline">
-                            Resend Link
-                        </Link>
+                        We've sent a verification link to {values.email}. Please check your inbox (and spam folder) to continue.
                     </p>
                 )
             });

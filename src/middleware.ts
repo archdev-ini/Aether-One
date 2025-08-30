@@ -1,40 +1,24 @@
 
-import {withAuth} from 'next-auth/middleware';
-import {NextResponse} from 'next/server';
+import {NextResponse, type NextRequest} from 'next/server';
 
-export default withAuth(
-  function middleware(req) {
-    const token = req.nextauth.token;
-    const {pathname} = req.nextUrl;
+export function middleware(request: NextRequest) {
+  const currentUser = request.cookies.get('aether_user_id')?.value;
+  const {pathname} = request.nextUrl;
 
-    const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/join');
+  const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/join');
 
-    // If user is trying to access auth pages but is already logged in, redirect them
-    if (isAuthPage && token) {
-      return NextResponse.redirect(new URL('/profile', req.url));
-    }
-    
-    // If user's profile is not complete, redirect them to the profile setup page,
-    // unless they are already on it.
-    if (token && !token.isProfileComplete && pathname !== '/profile') {
-      return NextResponse.redirect(new URL('/profile', req.url));
-    }
-  },
-  {
-    callbacks: {
-      authorized: ({token}) => {
-        // This makes the middleware apply to all routes.
-        // We handle public vs. private logic inside the middleware function.
-        return true;
-      },
-    },
-     pages: {
-      signIn: '/login',
-    }
+  if (isAuthPage && currentUser) {
+    return NextResponse.redirect(new URL('/profile', request.url));
   }
-);
 
-// This specifies which routes the middleware should run on.
+  // Add protection for other routes if needed, for example:
+  // if (pathname.startsWith('/dashboard') && !currentUser) {
+  //   return NextResponse.redirect(new URL('/login', request.url));
+  // }
+
+  return NextResponse.next();
+}
+
 export const config = {
   matcher: [
     /*

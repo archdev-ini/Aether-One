@@ -18,6 +18,7 @@ import { useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 const navLinks = [
   { href: '/events', label: 'Events' },
@@ -53,18 +54,10 @@ function ThemeToggle() {
   )
 }
 
-interface HeaderProps {
-  user: { name: string; id: string } | null;
-}
-
-export function Header({ user: initialUser }: HeaderProps) {
+export function Header() {
+  const { data: session, status } = useSession();
   const { toast } = useToast();
   const router = useRouter();
-  const [user, setUser] = useState(initialUser);
-
-  useEffect(() => {
-    setUser(initialUser);
-  }, [initialUser]);
 
   const handleLogout = async () => {
     
@@ -76,6 +69,8 @@ export function Header({ user: initialUser }: HeaderProps) {
     router.push('/');
     router.refresh();
   }
+
+  const user = status === 'authenticated' ? session.user : null;
 
   return (
     <>
@@ -152,8 +147,8 @@ export function Header({ user: initialUser }: HeaderProps) {
                     <DropdownMenuTrigger asChild>
                          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                            <Avatar className="h-8 w-8">
-                                <AvatarImage src={`https://api.dicebear.com/7.x/bottts/svg?seed=${user.id}`} alt={user.name} />
-                                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                <AvatarImage src={`https://api.dicebear.com/7.x/bottts/svg?seed=${user.aetherId}`} alt={user.name || ''} />
+                                <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
                            </Avatar>
                          </Button>
                     </DropdownMenuTrigger>
