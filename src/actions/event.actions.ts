@@ -34,7 +34,6 @@ export async function submitRsvp(values: RsvpFormValues) {
         const rsvpRecord = {
             'fldejTBGYZV2zwMaH': [event.airtableId], // Link to the event record
             'fldkyFvyFq2p40Prz': user && user.airtableId ? [user.airtableId] : undefined, // Link to user if they exist
-            // No 'Notes' field in the provided schema for Event Registrations
         };
         
         await db.createRsvp(rsvpRecord);
