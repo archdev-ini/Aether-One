@@ -13,12 +13,12 @@ const signUpSchema = z.object({
   fullName: z.string().min(2),
   email: z.string().email(),
   location: z.string().min(2),
-  ageRange: z.string(),
-  currentRole: z.string(),
-  mainInterest: z.string(),
-  preferredPlatform: z.string(),
+  phone: z.string().optional(),
+  professionalLevel: z.string(),
+  interestAreas: z.array(z.string()).min(1),
   socialHandle: z.string().optional(),
   goals: z.string().optional(),
+  consent: z.literal(true),
 });
 
 const profileUpdateSchema = z.object({
@@ -53,15 +53,14 @@ export async function createUser(values: z.infer<typeof signUpSchema>) {
     const newUser = await db.createUser({
       FullName: validatedData.fullName,
       Email: validatedData.email,
+      IsActivated: false,
       CityCountry: validatedData.location,
-      AgeRange: validatedData.ageRange,
-      CurrentRole: validatedData.currentRole,
-      MainInterest: validatedData.mainInterest,
-      PreferredCommunityPlatform: validatedData.preferredPlatform,
+      Phone: validatedData.phone,
+      ProfessionalLevel: validatedData.professionalLevel,
+      InterestAreas: validatedData.interestAreas.join(', '),
       SocialHandle: validatedData.socialHandle,
       Goals: validatedData.goals,
       VerificationToken: verificationToken,
-      IsActivated: false,
     });
 
     if (!newUser) {
@@ -76,7 +75,6 @@ export async function createUser(values: z.infer<typeof signUpSchema>) {
     await sendVerificationEmail({
       to: validatedData.email,
       name: validatedData.fullName,
-      aetherId: newUser.AetherID,
       verificationLink,
     });
 
@@ -102,12 +100,9 @@ export async function updateUserProfile(values: z.infer<typeof profileUpdateSche
         await db.updateUser(user.airtableId, {
             FullName: validatedData.fullName,
             CityCountry: `${validatedData.city}, ${validatedData.country}`,
-            // Assuming phone and interests map to fields. We will use existing ones for now.
-            // SocialHandle will store the phone number for this example.
-            SocialHandle: validatedData.phone,
-            // Goals will store interests.
-            Goals: validatedData.interests.join(', '),
-            IsActivated: true, // Mark profile as complete
+            Phone: validatedData.phone,
+            InterestAreas: validatedData.interests.join(', '),
+            IsActivated: true, 
         });
 
         revalidatePath('/profile');
@@ -155,7 +150,7 @@ export async function verifyTokenAndLogin(token: string) {
     });
 
     // The redirect is handled on the page to allow for callbackUrl
-    return {success: true};
+    return {success: true, isProfileComplete: user.IsActivated };
   } catch (error) {
     console.error('Verification Error:', error);
     return {
@@ -198,3 +193,5 @@ export async function sendLoginLink(email: string) {
     return {success: false, message: 'An unexpected error occurred.'};
   }
 }
+
+    

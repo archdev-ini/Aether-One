@@ -35,8 +35,11 @@ async function VerificationStatus({ token, callbackUrl }: { token: string | unde
         );
     }
 
-    // Redirect will happen after setting cookies in the action
-    redirect(callbackUrl || '/profile');
+    if (result.isProfileComplete) {
+        redirect(callbackUrl || '/');
+    } else {
+        redirect('/profile');
+    }
 
     // This part will not be rendered due to the redirect, but it's a good fallback.
      return (
@@ -70,3 +73,5 @@ export default function VerificationPage({ searchParams }: VerificationPageProps
         </div>
     );
 }
+
+    

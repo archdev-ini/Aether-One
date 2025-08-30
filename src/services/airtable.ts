@@ -8,10 +8,9 @@ export type User = {
   FullName: string;
   Email: string;
   CityCountry: string;
-  AgeRange: string;
-  CurrentRole: string;
-  MainInterest: string;
-  PreferredCommunityPlatform: string;
+  Phone?: string;
+  ProfessionalLevel: string;
+  InterestAreas: string;
   SocialHandle?: string;
   Goals?: string;
   IsActivated: boolean;
@@ -109,10 +108,9 @@ type NewUserPayload = {
   Email: string;
   IsActivated: boolean;
   CityCountry: string;
-  AgeRange: string;
-  CurrentRole: string;
-  MainInterest: string;
-  PreferredCommunityPlatform: string;
+  Phone?: string;
+  ProfessionalLevel: string;
+  InterestAreas: string;
   SocialHandle?: string;
   Goals?: string;
   VerificationToken?: string | null;
@@ -121,8 +119,8 @@ type NewUserPayload = {
 type UpdateUserPayload = {
     FullName?: string;
     CityCountry?: string;
-    SocialHandle?: string;
-    Goals?: string;
+    Phone?: string;
+    InterestAreas?: string;
     IsActivated?: boolean;
 }
 
@@ -154,9 +152,6 @@ async function fetchAllRecords<T extends FieldSet>(
 
 function mapRecordToUser(record: Record<FieldSet>): User {
   const fields = record.fields;
-  const preferredPlatform = Array.isArray(fields.fldpL0ntu6jlFPZ8P)
-    ? (fields.fldpL0ntu6jlFPZ8P as string[])[0]
-    : (fields.fldpL0ntu6jlFPZ8P as string);
 
   return {
     airtableId: record.id,
@@ -164,10 +159,9 @@ function mapRecordToUser(record: Record<FieldSet>): User {
     FullName: fields.fldqcL4FrRIYg40qb as string,
     Email: fields.fldG6cwfmkjJnv9j7 as string,
     CityCountry: fields.fldUUjY4wwNBdkq8u as string,
-    AgeRange: fields.fld0kF6qzsFTPaLur as string,
-    CurrentRole: fields.fldDgav4evACyC1A3 as string,
-    MainInterest: fields.fldcxf5CUpXhmDHnJ as string,
-    PreferredCommunityPlatform: preferredPlatform,
+    Phone: fields.fldWtzhXg7e4g3B1A as string,
+    ProfessionalLevel: fields.fldmBUMaXAv1iFv2G as string,
+    InterestAreas: fields.fldcxf5CUpXhmDHnJ as string,
     SocialHandle: fields.fld1xxrWwFQ3B3Azn as string,
     Goals: fields.fldK7jPkvMehvA6XX as string,
     IsActivated: fields.fldZmHeRYwkkqrsOG === 'Active',
@@ -309,10 +303,9 @@ export const db = {
             fldqcL4FrRIYg40qb: userData.FullName,
             fldG6cwfmkjJnv9j7: userData.Email,
             fldUUjY4wwNBdkq8u: userData.CityCountry,
-            fld0kF6qzsFTPaLur: userData.AgeRange,
-            fldDgav4evACyC1A3: userData.CurrentRole,
-            fldcxf5CUpXhmDHnJ: userData.MainInterest,
-            fldpL0ntu6jlFPZ8P: [userData.PreferredCommunityPlatform],
+            fldmBUMaXAv1iFv2G: userData.ProfessionalLevel,
+            fldcxf5CUpXhmDHnJ: userData.InterestAreas,
+            fldWtzhXg7e4g3B1A: userData.Phone,
             fld1xxrWwFQ3B3Azn: userData.SocialHandle,
             fldK7jPkvMehvA6XX: userData.Goals,
             fldZmHeRYwkkqrsOG: userData.IsActivated ? 'Active' : 'Pending',
@@ -333,8 +326,8 @@ export const db = {
         const fieldsToUpdate: {[key: string]: any} = {};
         if (userData.FullName) fieldsToUpdate['fldqcL4FrRIYg40qb'] = userData.FullName;
         if (userData.CityCountry) fieldsToUpdate['fldUUjY4wwNBdkq8u'] = userData.CityCountry;
-        if (userData.SocialHandle) fieldsToUpdate['fld1xxrWwFQ3B3Azn'] = userData.SocialHandle;
-        if (userData.Goals) fieldsToUpdate['fldK7jPkvMehvA6XX'] = userData.Goals;
+        if (userData.Phone) fieldsToUpdate['fldWtzhXg7e4g3B1A'] = userData.Phone;
+        if (userData.InterestAreas) fieldsToUpdate['fldcxf5CUpXhmDHnJ'] = userData.InterestAreas;
         if (userData.IsActivated) fieldsToUpdate['fldZmHeRYwkkqrsOG'] = 'Active';
 
         const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update(recordId, fieldsToUpdate);
@@ -492,7 +485,7 @@ export const db = {
       return null;
     } catch (error) {
       console.error(`[Airtable] Error fetching About page content:`, error);
-      return null; // Return null on error to be handled by the page
+      return null; // Return null on an error to be handled by the page
     }
   },
 
@@ -513,3 +506,5 @@ export const db = {
     }
   },
 };
+
+    
