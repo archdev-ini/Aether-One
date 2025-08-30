@@ -104,16 +104,26 @@ type AboutContent = {
 };
 
 type NewUserPayload = {
-  FullName: string;
-  Email: string;
-  CityCountry: string;
-  Phone?: string;
-  ProfessionalLevel: string; // Maps to "Current Role"
-  InterestAreas: string; // Maps to "Main Interest"
-  SocialHandle?: string;
-  Goals?: string;
-  IsActivated: boolean;
-  VerificationToken?: string | null;
+    // Corresponds to 'Full Name' (fldqcL4FrRIYg40qb)
+    FullName: string;
+    // Corresponds to 'Email' (fldG6cwfmkjJnv9j7)
+    Email: string;
+    // Corresponds to 'City + Country' (fldUUjY4wwNBdkq8u)
+    CityCountry: string;
+    // Corresponds to 'Phone' (fld9KSt1cuYTq9zCz)
+    Phone?: string;
+    // Corresponds to 'Current Role' (fldDgav4evACyC1A3) which we map to ProfessionalLevel
+    ProfessionalLevel: string; 
+    // Corresponds to 'Main Interest' (fldcxf5CUpXhmDHnJ) which we map to InterestAreas
+    InterestAreas: string;
+    // Corresponds to 'Social Handle' (fld1xxrWwFQ3B3Azn)
+    SocialHandle?: string;
+    // Corresponds to 'Personal Goals with Aether' (fldK7jPkvMehvA6XX)
+    Goals?: string;
+    // Corresponds to 'Status' (fldZmHeRYwkkqrsOG)
+    IsActivated: boolean;
+    // Corresponds to 'Verification Token' (fldnglnnHpWIWcGTO)
+    VerificationToken?: string | null;
 };
 
 type UpdateUserPayload = {
@@ -155,29 +165,30 @@ function mapRecordToUser(record: Record<FieldSet>): User {
 
   return {
     airtableId: record.id,
-    AetherID: fields.fldFXMNoNPjbk6ypb as string,
-    FullName: fields.fldqcL4FrRIYg40qb as string,
-    Email: fields.fldG6cwfmkjJnv9j7 as string,
-    CityCountry: fields.fldUUjY4wwNBdkq8u as string,
-    Phone: fields.fld9KSt1cuYTq9zCz as string,
-    ProfessionalLevel: fields.fldHU4Sz08sfmIefa as string,
-    InterestAreas: fields.fldXKyV0Hy9Z2sN3b as string,
-    SocialHandle: fields.fld1xxrWwFQ3B3Azn as string,
-    Goals: fields.fldip7erPp7CMibnQL as string,
-    IsActivated: (fields.fldZmHeRYwkkqrsOG as string) === 'Active',
-    VerificationToken: fields.fldnglnnHpWIWcGTO as string,
-    CreatedAt: new Date(fields.fldrAolwAklMClPhF as string),
+    AetherID: fields.fldFXMNoNPjbk6ypb as string, // Aether ID
+    FullName: fields.fldqcL4FrRIYg40qb as string, // Full Name
+    Email: fields.fldG6cwfmkjJnv9j7 as string, // Email
+    CityCountry: fields.fldUUjY4wwNBdkq8u as string, // City + Country
+    Phone: fields.fld9KSt1cuYTq9zCz as string, // Phone
+    ProfessionalLevel: fields.fldHU4Sz08sfmIefa as string, // Professional Level
+    InterestAreas: fields.fldXKyV0Hy9Z2sN3b as string, // Interest Areas
+    SocialHandle: fields.fld1xxrWwFQ3B3Azn as string, // Social Handle
+    Goals: fields.fldip7erPp7CMibnQL as string, // Goals
+    IsActivated: (fields.fldZmHeRYwkkqrsOG as string) === 'Active', // Status
+    VerificationToken: fields.fldnglnnHpWIWcGTO as string, // Verification Token
+    CreatedAt: new Date(fields.fldrAolwAklMClPhF as string), // Created At
     ActivatedAt: (fields.fldZmHeRYwkkqrsOG as string) === 'Active' ? new Date() : null,
-    PreferredCommunityPlatform: fields.fldpL0ntu6jlFPZ8P as string[],
+    PreferredCommunityPlatform: fields.fldpL0ntu6jlFPZ8P as string[], // Preferred Community Platform
   };
 }
 
 function mapRecordToEvent(record: Record<FieldSet>): Event {
   const fields = record.fields;
   let speakers: Event['speakers'] = [];
-  if (fields.fld7qYoCXteCIAM32) {
+  // Use fldc5hZbMa9FX1Qfk for Speakers (JSON)
+  if (fields.fldc5hZbMa9FX1Qfk) {
     try {
-      speakers = JSON.parse(fields.fld7qYoCXteCIAM32 as string);
+      speakers = JSON.parse(fields.fldc5hZbMa9FX1Qfk as string);
     } catch (e) {
       console.error(
         'Failed to parse speakers for event ' + fields.fldmtn2xFhtijck4H,
@@ -187,9 +198,10 @@ function mapRecordToEvent(record: Record<FieldSet>): Event {
   }
 
   let agenda: Event['agenda'] = [];
-  if (fields.Agenda) {
+  // Use fldsSO3fRQdHpXvFC for Agenda (JSON)
+  if (fields.fldsSO3fRQdHpXvFC) {
     try {
-      agenda = JSON.parse(fields.Agenda as string);
+      agenda = JSON.parse(fields.fldsSO3fRQdHpXvFC as string);
     } catch (e) {
       console.error(
         'Failed to parse agenda for event ' + fields.fldmtn2xFhtijck4H,
@@ -200,18 +212,18 @@ function mapRecordToEvent(record: Record<FieldSet>): Event {
 
   return {
     airtableId: record.id,
-    code: fields.fldmtn2xFhtijck4H as string,
-    title: fields.fld1w8i3kvk81KTN1 as string,
-    date: fields.fldtOlaXw6TXiftBp as string,
-    type: fields.fldrIhDKMTz05NbjW as Event['type'],
+    code: fields.fldmtn2xFhtijck4H as string, // Shortcode
+    title: fields.fld1w8i3kvk81KTN1 as string, // Event Name
+    date: fields.fldtOlaXw6TXiftBp as string, // Date
+    type: fields.fldrIhDKMTz05NbjW as Event['type'], // Event Type
     focus: 'General',
     description:
-      (fields.fldeUgXSaYspo7nj6 as string)?.substring(0, 150) + '...' || '',
+      (fields.fldeUgXSaYspo7nj6 as string)?.substring(0, 150) + '...' || '', // Description
     image: 'https://picsum.photos/800/600',
     aiHint: 'event placeholder',
     platform: 'Online',
     location: 'Global',
-    longDescription: fields.fldeUgXSaYspo7nj6 as string,
+    longDescription: fields.fldeUgXSaYspo7nj6 as string, // Description
     speakers,
     agenda,
   };
@@ -257,9 +269,9 @@ export const db = {
   async findUserByEmail(email: string): Promise<User | null> {
     if (!base) return null;
     try {
-      const records = await base('tbl2Q9DdVCmKFKHnt')
+      const records = await base('tbl2Q9DdVCmKFKHnt') // Users table
         .select({
-          filterByFormula: `{fldG6cwfmkjJnv9j7} = "${email}"`,
+          filterByFormula: `{fldG6cwfmkjJnv9j7} = "${email}"`, // Email field
           maxRecords: 1,
         })
         .firstPage();
@@ -277,9 +289,9 @@ export const db = {
   async findUserById(id: string): Promise<User | null> {
     if (!base) return null;
     try {
-      const records = await base('tbl2Q9DdVCmKFKHnt')
+      const records = await base('tbl2Q9DdVCmKFKHnt') // Users table
         .select({
-          filterByFormula: `{fldFXMNoNPjbk6ypb} = "${id}"`,
+          filterByFormula: `{fldFXMNoNPjbk6ypb} = "${id}"`, // Aether ID field
           maxRecords: 1,
         })
         .firstPage();
@@ -297,19 +309,19 @@ export const db = {
   async createUser(userData: NewUserPayload): Promise<User | null> {
     if (!base) return null;
     try {
-      const record = await base('tbl2Q9DdVCmKFKHnt').create([
+      const record = await base('tbl2Q9DdVCmKFKHnt').create([ // Users table
         {
           fields: {
-            fldqcL4FrRIYg40qb: userData.FullName,
-            fldG6cwfmkjJnv9j7: userData.Email,
-            fldUUjY4wwNBdkq8u: userData.CityCountry,
-            fldHU4Sz08sfmIefa: userData.ProfessionalLevel,
-            fldXKyV0Hy9Z2sN3b: userData.InterestAreas,
-            fld9KSt1cuYTq9zCz: userData.Phone,
-            fld1xxrWwFQ3B3Azn: userData.SocialHandle,
-            fldip7erPp7CMibnQL: userData.Goals,
-            fldZmHeRYwkkqrsOG: userData.IsActivated ? 'Active' : 'Pending',
-            fldnglnnHpWIWcGTO: userData.VerificationToken,
+            fldqcL4FrRIYg40qb: userData.FullName,           // Full Name
+            fldG6cwfmkjJnv9j7: userData.Email,              // Email
+            fldUUjY4wwNBdkq8u: userData.CityCountry,        // City + Country
+            fld9KSt1cuYTq9zCz: userData.Phone,              // Phone
+            fldHU4Sz08sfmIefa: userData.ProfessionalLevel,  // Professional Level
+            fldXKyV0Hy9Z2sN3b: userData.InterestAreas,      // Interest Areas
+            fld1xxrWwFQ3B3Azn: userData.SocialHandle,       // Social Handle
+            fldip7erPp7CMibnQL: userData.Goals,              // Goals
+            fldZmHeRYwkkqrsOG: userData.IsActivated ? 'Active' : 'Pending', // Status
+            fldnglnnHpWIWcGTO: userData.VerificationToken, // Verification Token
           },
         },
       ]);
@@ -324,11 +336,11 @@ export const db = {
     if (!base) return null;
     try {
         const fieldsToUpdate: {[key: string]: any} = {};
-        if (userData.FullName) fieldsToUpdate.fldqcL4FrRIYg40qb = userData.FullName;
-        if (userData.CityCountry) fieldsToUpdate.fldUUjY4wwNBdkq8u = userData.CityCountry;
-        if (userData.Phone) fieldsToUpdate.fld9KSt1cuYTq9zCz = userData.Phone;
-        if (userData.InterestAreas) fieldsToUpdate.fldXKyV0Hy9Z2sN3b = userData.InterestAreas;
-        if (userData.IsActivated) fieldsToUpdate.fldZmHeRYwkkqrsOG = 'Active';
+        if (userData.FullName) fieldsToUpdate.fldqcL4FrRIYg40qb = userData.FullName; // Full Name
+        if (userData.CityCountry) fieldsToUpdate.fldUUjY4wwNBdkq8u = userData.CityCountry; // City + Country
+        if (userData.Phone) fieldsToUpdate.fld9KSt1cuYTq9zCz = userData.Phone; // Phone
+        if (userData.InterestAreas) fieldsToUpdate.fldXKyV0Hy9Z2sN3b = userData.InterestAreas; // Interest Areas
+        if (userData.IsActivated) fieldsToUpdate.fldZmHeRYwkkqrsOG = 'Active'; // Status
 
         const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update(recordId, fieldsToUpdate);
         return mapRecordToUser(updatedRecord);
@@ -341,9 +353,9 @@ export const db = {
   async verifyUserByToken(token: string): Promise<User | null> {
     if (!base) return null;
     try {
-      const records = await base('tbl2Q9DdVCmKFKHnt')
+      const records = await base('tbl2Q9DdVCmKFKHnt') // Users table
         .select({
-          filterByFormula: `{fldnglnnHpWIWcGTO} = "${token}"`,
+          filterByFormula: `{fldnglnnHpWIWcGTO} = "${token}"`, // Verification Token
           maxRecords: 1,
         })
         .firstPage();
@@ -353,11 +365,11 @@ export const db = {
       }
 
       const userRecord = records[0];
-      const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update(
+      const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update( // Users table
         userRecord.id,
         {
-          fldZmHeRYwkkqrsOG: 'Active',
-          fldnglnnHpWIWcGTO: null,
+          fldZmHeRYwkkqrsOG: 'Active', // Status
+          fldnglnnHpWIWcGTO: null,     // Verification Token
         }
       );
 
@@ -377,10 +389,10 @@ export const db = {
     if (!user || !user.airtableId) return null;
 
     try {
-      const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update(
+      const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update( // Users table
         user.airtableId,
         {
-          fldnglnnHpWIWcGTO: token,
+          fldnglnnHpWIWcGTO: token, // Verification Token
         }
       );
       return mapRecordToUser(updatedRecord);
@@ -410,9 +422,9 @@ export const db = {
   async getRsvpCountForEvent(eventCode: string): Promise<number> {
     if (!base) return 0;
     try {
-      const records = await base('tblzZ5tXPYQaavzEJ')
+      const records = await base('tblzZ5tXPYQaavzEJ') // Event Registrations table
         .select({
-          filterByFormula: `{fldfnpJ4aHxdweObc} = "${eventCode}"`,
+          filterByFormula: `{fldfnpJ4aHxdweObc} = "${eventCode}"`, // Lookup field of Event Code
         })
         .all();
       return records.length;
@@ -427,16 +439,16 @@ export const db = {
 
   async getEvents(): Promise<Event[]> {
     if (!base) return [];
-    const records = await fetchAllRecords<FieldSet>('tblDEVT8wrX6U35gk');
+    const records = await fetchAllRecords<FieldSet>('tblDEVT8wrX6U35gk'); // Events table
     return records.map(mapRecordToEvent);
   },
 
   async getEventByCode(code: string): Promise<Event | null> {
     if (!base) return null;
     try {
-      const records = await base('tblDEVT8wrX6U35gk')
+      const records = await base('tblDEVT8wrX6U35gk') // Events table
         .select({
-          filterByFormula: `{fldmtn2xFhtijck4H} = "${code}"`,
+          filterByFormula: `{fldmtn2xFhtijck4H} = "${code}"`, // Shortcode field
           maxRecords: 1,
         })
         .firstPage();
