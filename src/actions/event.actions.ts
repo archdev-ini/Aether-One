@@ -14,6 +14,25 @@ type RsvpFormValues = {
   interest?: string;
 };
 
+function handleAirtableError(error: any) {
+    console.error('[Airtable Action Error]', error);
+    // Check if it's an Airtable API error
+    if (error.statusCode && error.message) {
+        switch (error.statusCode) {
+            case 401:
+            case 403:
+                return { success: false, message: "Authentication failed. Please check your Airtable API key and base permissions." };
+            case 404:
+                return { success: false, message: "The requested resource was not found. Please check your Airtable base/table IDs." };
+            case 422:
+                return { success: false, message: `Invalid request data: ${error.message}` };
+            default:
+                return { success: false, message: `Airtable API Error (${error.statusCode}): ${error.message}` };
+        }
+    }
+    return { success: false, message: "An unexpected error occurred while reserving your spot." };
+}
+
 export async function submitRsvp(values: RsvpFormValues) {
     try {
         const event = await db.getEventByCode(values.eventCode);
@@ -51,7 +70,6 @@ export async function submitRsvp(values: RsvpFormValues) {
 
         return { success: true, message: "Your spot has been reserved!" };
     } catch (error) {
-        console.error("Error submitting RSVP:", error);
-        return { success: false, message: "An unexpected error occurred while reserving your spot." };
+        return handleAirtableError(error);
     }
 }

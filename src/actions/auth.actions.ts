@@ -33,6 +33,28 @@ const profileUpdateSchema = z.object({
   }),
 });
 
+function handleAirtableError(error: any) {
+    console.error('[Airtable Action Error]', error);
+    if (error instanceof z.ZodError) {
+      return {success: false, message: 'Invalid form data.'};
+    }
+    // Check if it's an Airtable API error
+    if (error.statusCode && error.message) {
+        switch (error.statusCode) {
+            case 401:
+            case 403:
+                return { success: false, message: "Authentication failed. Please check your Airtable API key and base permissions." };
+            case 404:
+                return { success: false, message: "The requested resource was not found. Please check your Airtable base/table IDs." };
+            case 422:
+                return { success: false, message: `Invalid request data: ${error.message}` };
+            default:
+                return { success: false, message: `Airtable API Error (${error.statusCode}): ${error.message}` };
+        }
+    }
+    return {success: false, message: 'An unexpected error occurred.'};
+}
+
 
 export async function createUser(values: z.infer<typeof signUpSchema>) {
   try {
@@ -79,11 +101,7 @@ export async function createUser(values: z.infer<typeof signUpSchema>) {
 
     return {success: true};
   } catch (error) {
-    console.error('Error creating user:', error);
-    if (error instanceof z.ZodError) {
-      return {success: false, message: 'Invalid form data.'};
-    }
-    return {success: false, message: 'An unexpected error occurred.'};
+    return handleAirtableError(error);
   }
 }
 
@@ -109,11 +127,7 @@ export async function updateUserProfile(values: z.infer<typeof profileUpdateSche
         return { success: true };
 
     } catch (error) {
-        console.error("Error updating user profile:", error);
-        if (error instanceof z.ZodError) {
-            return { success: false, message: "Invalid form data." };
-        }
-        return { success: false, message: "An unexpected error occurred." };
+        return handleAirtableError(error);
     }
 }
 
@@ -151,11 +165,7 @@ export async function verifyTokenAndLogin(token: string) {
     // The redirect is handled on the page to allow for callbackUrl
     return {success: true, isProfileComplete: user.IsActivated };
   } catch (error) {
-    console.error('Verification Error:', error);
-    return {
-      success: false,
-      message: 'An unexpected error occurred during verification.',
-    };
+    return handleAirtableError(error);
   }
 }
 
@@ -187,7 +197,6 @@ export async function sendLoginLink(email: string) {
       message: `A magic link has been sent to ${email}.`,
     };
   } catch (error) {
-    console.error('Error sending login link:', error);
-    return {success: false, message: 'An unexpected error occurred.'};
+    return handleAirtableError(error);
   }
 }
