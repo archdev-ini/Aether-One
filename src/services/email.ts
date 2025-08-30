@@ -40,7 +40,7 @@ const transporter = (
     },
 }) : null;
 
-const fromEmail = process.env.EMAIL_FROM || 'noreply@aether.xyz';
+const fromEmail = process.env.EMAIL_FROM || 'buildrafrica@gmail.com';
 
 
 const mockEmailLog = (type: string, payload: any) => {
@@ -61,18 +61,33 @@ export async function sendVerificationEmail(payload: VerificationEmailPayload) {
   }
 
   const { to, name, aetherId, verificationLink } = payload;
-  const subject = "Activate Your Aether ID 🌍";
+  const subject = "Activate your Aether Account";
   const htmlBody = `
-    <div style="font-family: sans-serif; line-height: 1.6;">
-      <h2>Hi ${name},</h2>
-      <p>Welcome to the Aether Ecosystem! 🎉</p>
-      <p>Your unique Aether ID is: <strong>${aetherId}</strong>.</p>
-      <p>Please click the button below to activate your account and join the community:</p>
-      <a href="${verificationLink}" style="background-color: #663399; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Activate My Aether ID</a>
-      <p>If you didn’t request this, please ignore this email.</p>
-      <p>Best,<br/>The Aether Team</p>
-    </div>
+    <p>Hello 👋,</p>
+    <p>Welcome to <b>Aether</b> — we’re excited to have you!</p>
+    <p>Click the button below to verify your email and activate your account:</p>
+    <p>
+      <a href="${verificationLink}" 
+         style="display: inline-block; padding: 12px 24px; font-family: sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; background-color: #663399; text-decoration: none; border-radius: 5px;">
+        Activate Account
+      </a>
+    </p>
+    <p>This link will expire in <b>10 minutes</b>. If it doesn’t work, copy and paste this into your browser:</p>
+    <p>${verificationLink}</p>
+    <hr/>
+    <p>You’re receiving this email because you signed up on Aether with <b>${to}</b>.</p>
+    <p>If this wasn’t you, you can safely ignore this message.</p>
   `;
+
+  const textBody = `
+    Hello,
+
+    Welcome to Aether! Click the link below to activate your account:
+    ${verificationLink}
+
+    This link expires in 10 minutes. If you didn’t sign up, ignore this message.
+  `;
+
 
   try {
       await transporter.sendMail({
@@ -80,6 +95,7 @@ export async function sendVerificationEmail(payload: VerificationEmailPayload) {
           to: to,
           subject: subject,
           html: htmlBody,
+          text: textBody,
       });
       return { success: true };
   } catch (error) {

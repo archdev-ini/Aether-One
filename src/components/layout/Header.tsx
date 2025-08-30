@@ -14,11 +14,9 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { Separator } from '@/components/ui/separator';
-import { useState, useEffect } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 
 const navLinks = [
   { href: '/events', label: 'Events' },
@@ -54,8 +52,11 @@ function ThemeToggle() {
   )
 }
 
-export function Header() {
-  const { data: session, status } = useSession();
+interface HeaderProps {
+    user: { name: string, id: string } | null;
+}
+
+export function Header({ user }: HeaderProps) {
   const { toast } = useToast();
   const router = useRouter();
 
@@ -69,8 +70,6 @@ export function Header() {
     router.push('/');
     router.refresh();
   }
-
-  const user = status === 'authenticated' ? session.user : null;
 
   return (
     <>
@@ -147,7 +146,7 @@ export function Header() {
                     <DropdownMenuTrigger asChild>
                          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                            <Avatar className="h-8 w-8">
-                                <AvatarImage src={`https://api.dicebear.com/7.x/bottts/svg?seed=${user.aetherId}`} alt={user.name || ''} />
+                                <AvatarImage src={`https://api.dicebear.com/7.x/bottts/svg?seed=${user.id}`} alt={user.name || ''} />
                                 <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
                            </Avatar>
                          </Button>
