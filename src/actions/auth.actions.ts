@@ -48,18 +48,17 @@ export async function createUser(values: z.infer<typeof signUpSchema>) {
     }
 
     const verificationToken = crypto.randomUUID();
-    const verificationTokenExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
 
     const newUser = await db.createUser({
       FullName: validatedData.fullName,
       Email: validatedData.email,
-      IsActivated: false,
       CityCountry: validatedData.location,
       Phone: validatedData.phone,
       ProfessionalLevel: validatedData.professionalLevel,
       InterestAreas: validatedData.interestAreas.join(', '),
       SocialHandle: validatedData.socialHandle,
       Goals: validatedData.goals,
+      IsActivated: false,
       VerificationToken: verificationToken,
     });
 
@@ -172,9 +171,8 @@ export async function sendLoginLink(email: string) {
     }
 
     const loginToken = crypto.randomUUID();
-    const loginTokenExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
 
-    await db.updateUserToken(email, loginToken, loginTokenExpires);
+    await db.updateUserToken(email, loginToken);
 
     const loginLink = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify?token=${loginToken}`;
 
@@ -193,5 +191,3 @@ export async function sendLoginLink(email: string) {
     return {success: false, message: 'An unexpected error occurred.'};
   }
 }
-
-    

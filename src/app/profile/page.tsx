@@ -28,6 +28,10 @@ import {useToast} from '@/hooks/use-toast';
 import {updateUserProfile} from '@/actions/auth.actions';
 import {Checkbox} from '@/components/ui/checkbox';
 import { useRouter } from 'next/navigation';
+import { db, User } from '@/services/airtable';
+import { useSession } from 'next-auth/react';
+import { getCookie } from 'cookies-next';
+
 
 const profileFormSchema = z.object({
   email: z.string().email(),
@@ -54,42 +58,39 @@ const interests = [
   {id: 'Other', label: 'Other'},
 ];
 
-// This is a simplified stand-in for fetching user data.
-// In a real app, you'd fetch this from your backend/API.
-async function getUserData() {
-    // This is a placeholder. In a real app, you'd get this from a server component or an API call.
-    // For this client component, we'll assume the data is passed in or fetched.
-    // This part will need to be connected to the actual user session.
-    return {
-        isProfileComplete: false, // Placeholder
-        email: "user@example.com", // Placeholder
-        name: "New User", // Placeholder
-    }
-}
-
 
 export default function ProfilePage() {
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-
+    const { toast } = useToast();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    // In a real app, you'd get this from a server component or an API call.
+    // For this client component, we'll assume the data is passed in or fetched.
     useEffect(() => {
-        // Here we would normally fetch user data
-        // For now, we simulate it
-        getUserData().then(data => {
-            setUser(data);
+        const fetchUser = async () => {
+            const email = getCookie('user_email'); // Assuming email is stored in a cookie
+            if (typeof email === 'string') {
+                // This is a placeholder for a proper API call
+                // In a real app, create an API endpoint to get user by email
+                // const response = await fetch(`/api/user?email=${email}`);
+                // const data = await response.json();
+                // setUser(data.user);
+                // For now, let's mock it
+                setUser({ email: email, name: getCookie('aether_user_name') || 'New User', IsActivated: false });
+            }
             setLoading(false);
-        });
+        };
+        fetchUser();
     }, []);
 
-    const {toast} = useToast();
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof profileFormSchema>>({
         resolver: zodResolver(profileFormSchema),
         defaultValues: {
-            email: user?.email || '',
-            fullName: user?.name || '',
+            email: '',
+            fullName: '',
             city: '',
             country: '',
             phone: '',
@@ -102,12 +103,12 @@ export default function ProfilePage() {
     useEffect(() => {
         if(user) {
             form.reset({
-                email: user.email,
-                fullName: user.name,
-                city: '',
-                country: '',
-                phone: '',
-                interests: [],
+                email: user.Email || '',
+                fullName: user.FullName || '',
+                city: user.CityCountry?.split(',')[0] || '',
+                country: user.CityCountry?.split(',')[1]?.trim() || '',
+                phone: user.Phone || '',
+                interests: user.InterestAreas ? user.InterestAreas.split(', ') : [],
                 consent: false,
             });
         }
@@ -147,16 +148,16 @@ export default function ProfilePage() {
         return <div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>
     }
 
-    // In a real app, we would have better logic for this based on actual user data.
-    const isProfileComplete = false; 
+    // This should be driven by user.IsActivated
+    const isProfileComplete = user?.IsActivated || false; 
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
         {isProfileComplete ? (
              <Card className="w-full max-w-2xl">
                 <CardHeader>
-                    <CardTitle>{user.name}</CardTitle>
-                    <CardDescription>{user.email}</CardDescription>
+                    <CardTitle>{user.FullName}</CardTitle>
+                    <CardDescription>{user.Email}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <p>Welcome back to Aether! Your profile is complete.</p>
@@ -315,4 +316,3 @@ export default function ProfilePage() {
         </div>
     );
 }
-

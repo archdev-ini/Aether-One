@@ -9,15 +9,15 @@ export type User = {
   Email: string;
   CityCountry: string;
   Phone?: string;
-  ProfessionalLevel: string;
-  InterestAreas: string;
+  ProfessionalLevel: string; // "Current Role" in Airtable
+  InterestAreas: string; // "Main Interest" in Airtable
   SocialHandle?: string;
   Goals?: string;
   IsActivated: boolean;
   VerificationToken?: string | null;
-  VerificationTokenExpires?: Date;
   CreatedAt?: Date;
   ActivatedAt?: Date | null;
+  PreferredCommunityPlatform?: string[];
 };
 
 export type Event = {
@@ -106,13 +106,13 @@ type AboutContent = {
 type NewUserPayload = {
   FullName: string;
   Email: string;
-  IsActivated: boolean;
   CityCountry: string;
   Phone?: string;
-  ProfessionalLevel: string;
-  InterestAreas: string;
+  ProfessionalLevel: string; // Maps to "Current Role"
+  InterestAreas: string; // Maps to "Main Interest"
   SocialHandle?: string;
   Goals?: string;
+  IsActivated: boolean;
   VerificationToken?: string | null;
 };
 
@@ -159,16 +159,16 @@ function mapRecordToUser(record: Record<FieldSet>): User {
     FullName: fields.fldqcL4FrRIYg40qb as string,
     Email: fields.fldG6cwfmkjJnv9j7 as string,
     CityCountry: fields.fldUUjY4wwNBdkq8u as string,
-    Phone: fields.fldWtzhXg7e4g3B1A as string,
-    ProfessionalLevel: fields.fldmBUMaXAv1iFv2G as string,
-    InterestAreas: fields.fldcxf5CUpXhmDHnJ as string,
+    Phone: fields.fld9KSt1cuYTq9zCz as string,
+    ProfessionalLevel: fields.fldHU4Sz08sfmIefa as string,
+    InterestAreas: fields.fldXKyV0Hy9Z2sN3b as string,
     SocialHandle: fields.fld1xxrWwFQ3B3Azn as string,
-    Goals: fields.fldK7jPkvMehvA6XX as string,
-    IsActivated: fields.fldZmHeRYwkkqrsOG === 'Active',
-    VerificationToken: fields.fldEhutDpQHkfxRqf as string,
-    VerificationTokenExpires: new Date(),
-    CreatedAt: new Date(fields.fldeAm50SwW5CMIZS as string),
-    ActivatedAt: fields.fldZmHeRYwkkqrsOG === 'Active' ? new Date() : null,
+    Goals: fields.fldip7erPp7CMibnQL as string,
+    IsActivated: (fields.fldZmHeRYwkkqrsOG as string) === 'Active',
+    VerificationToken: fields.fldnglnnHpWIWcGTO as string,
+    CreatedAt: new Date(fields.fldrAolwAklMClPhF as string),
+    ActivatedAt: (fields.fldZmHeRYwkkqrsOG as string) === 'Active' ? new Date() : null,
+    PreferredCommunityPlatform: fields.fldpL0ntu6jlFPZ8P as string[],
   };
 }
 
@@ -236,7 +236,7 @@ function mapRecordToResource(record: Record<FieldSet>): Resource {
     link: fields.fldPelfxEz472Cd6w as string,
     access: fields.fld6eN4CWOZV57z0a as Resource['access'],
     dateAdded: fields.fldtPmgHB5pcuZunMC as string,
-    description: fields.fldH5UYeRttsIEUpX as string,
+description: fields.fldH5UYeRttsIEUpX as string,
   };
 }
 
@@ -303,13 +303,13 @@ export const db = {
             fldqcL4FrRIYg40qb: userData.FullName,
             fldG6cwfmkjJnv9j7: userData.Email,
             fldUUjY4wwNBdkq8u: userData.CityCountry,
-            fldmBUMaXAv1iFv2G: userData.ProfessionalLevel,
-            fldcxf5CUpXhmDHnJ: userData.InterestAreas,
-            fldWtzhXg7e4g3B1A: userData.Phone,
+            fldHU4Sz08sfmIefa: userData.ProfessionalLevel,
+            fldXKyV0Hy9Z2sN3b: userData.InterestAreas,
+            fld9KSt1cuYTq9zCz: userData.Phone,
             fld1xxrWwFQ3B3Azn: userData.SocialHandle,
-            fldK7jPkvMehvA6XX: userData.Goals,
+            fldip7erPp7CMibnQL: userData.Goals,
             fldZmHeRYwkkqrsOG: userData.IsActivated ? 'Active' : 'Pending',
-            fldEhutDpQHkfxRqf: userData.VerificationToken,
+            fldnglnnHpWIWcGTO: userData.VerificationToken,
           },
         },
       ]);
@@ -324,11 +324,11 @@ export const db = {
     if (!base) return null;
     try {
         const fieldsToUpdate: {[key: string]: any} = {};
-        if (userData.FullName) fieldsToUpdate['fldqcL4FrRIYg40qb'] = userData.FullName;
-        if (userData.CityCountry) fieldsToUpdate['fldUUjY4wwNBdkq8u'] = userData.CityCountry;
-        if (userData.Phone) fieldsToUpdate['fldWtzhXg7e4g3B1A'] = userData.Phone;
-        if (userData.InterestAreas) fieldsToUpdate['fldcxf5CUpXhmDHnJ'] = userData.InterestAreas;
-        if (userData.IsActivated) fieldsToUpdate['fldZmHeRYwkkqrsOG'] = 'Active';
+        if (userData.FullName) fieldsToUpdate.fldqcL4FrRIYg40qb = userData.FullName;
+        if (userData.CityCountry) fieldsToUpdate.fldUUjY4wwNBdkq8u = userData.CityCountry;
+        if (userData.Phone) fieldsToUpdate.fld9KSt1cuYTq9zCz = userData.Phone;
+        if (userData.InterestAreas) fieldsToUpdate.fldXKyV0Hy9Z2sN3b = userData.InterestAreas;
+        if (userData.IsActivated) fieldsToUpdate.fldZmHeRYwkkqrsOG = 'Active';
 
         const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update(recordId, fieldsToUpdate);
         return mapRecordToUser(updatedRecord);
@@ -343,7 +343,7 @@ export const db = {
     try {
       const records = await base('tbl2Q9DdVCmKFKHnt')
         .select({
-          filterByFormula: `{fldEhutDpQHkfxRqf} = "${token}"`,
+          filterByFormula: `{fldnglnnHpWIWcGTO} = "${token}"`,
           maxRecords: 1,
         })
         .firstPage();
@@ -357,7 +357,7 @@ export const db = {
         userRecord.id,
         {
           fldZmHeRYwkkqrsOG: 'Active',
-          fldEhutDpQHkfxRqf: null,
+          fldnglnnHpWIWcGTO: null,
         }
       );
 
@@ -371,7 +371,6 @@ export const db = {
   async updateUserToken(
     email: string,
     token: string,
-    expires: Date
   ): Promise<User | null> {
     if (!base) return null;
     const user = await this.findUserByEmail(email);
@@ -381,7 +380,7 @@ export const db = {
       const updatedRecord = await base('tbl2Q9DdVCmKFKHnt').update(
         user.airtableId,
         {
-          fldEhutDpQHkfxRqf: token,
+          fldnglnnHpWIWcGTO: token,
         }
       );
       return mapRecordToUser(updatedRecord);
@@ -506,5 +505,3 @@ export const db = {
     }
   },
 };
-
-    

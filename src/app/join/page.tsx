@@ -26,7 +26,7 @@ const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
   location: z.string().min(2, { message: "City and country are required." }),
   phone: z.string().optional(),
-  professionalLevel: z.string({ required_error: "Please select your professional level." }),
+  professionalLevel: z.string({ required_error: "Please select your current role." }),
   interestAreas: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: "You have to select at least one interest area.",
   }),
@@ -183,18 +183,18 @@ export default function JoinPage() {
                                     name="professionalLevel"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Professional Level</FormLabel>
+                                            <FormLabel>Current Role</FormLabel>
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select your level" />
+                                                    <SelectValue placeholder="Select your role" />
                                                 </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
                                                     <SelectItem value="Student">Student</SelectItem>
-                                                    <SelectItem value="Early Career">Early Career</SelectItem>
-                                                    <SelectItem value="Mid Career">Mid Career</SelectItem>
-                                                    <SelectItem value="Expert/Professional">Expert/Professional</SelectItem>
+                                                    <SelectItem value="Professional">Professional</SelectItem>
+                                                    <SelectItem value="Enthusiast">Enthusiast</SelectItem>
+                                                    <SelectItem value="Other">Other</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -222,13 +222,19 @@ export default function JoinPage() {
                                 render={() => (
                                     <FormItem>
                                     <div className="mb-4">
-                                        <FormLabel className="text-base">Interest Areas</FormLabel>
+                                        <FormLabel className="text-base">Main Interest</FormLabel>
                                         <FormDescription>
-                                        Select all topics that apply to you.
+                                        Select the topic that best describes your main interest.
                                         </FormDescription>
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {interestAreas.map((item) => (
+                                    {[
+                                        { id: "Architecture", label: "Architecture" },
+                                        { id: "Design", label: "Design" },
+                                        { id: "Web3", label: "Web3" },
+                                        { id: "BIM", label: "BIM" },
+                                        { id: "Other", label: "Other" },
+                                    ].map((item) => (
                                         <FormField
                                         key={item.id}
                                         control={form.control}
@@ -244,12 +250,8 @@ export default function JoinPage() {
                                                     checked={field.value?.includes(item.id)}
                                                     onCheckedChange={(checked) => {
                                                     return checked
-                                                        ? field.onChange([...(field.value || []), item.id])
-                                                        : field.onChange(
-                                                            field.value?.filter(
-                                                            (value) => value !== item.id
-                                                            )
-                                                        )
+                                                        ? field.onChange([item.id])
+                                                        : field.onChange([])
                                                     }}
                                                 />
                                                 </FormControl>
@@ -315,5 +317,3 @@ export default function JoinPage() {
     </div>
   );
 }
-
-    
