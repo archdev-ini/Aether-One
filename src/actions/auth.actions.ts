@@ -52,7 +52,7 @@ function handleAirtableError(error: any) {
                 return { success: false, message: `Airtable API Error (${error.statusCode}): ${error.message}` };
         }
     }
-    return {success: false, message: 'An unexpected error occurred.'};
+    return {success: false, message: error.message || 'An unexpected error occurred.'};
 }
 
 
@@ -84,23 +84,22 @@ export async function createUser(values: z.infer<typeof signUpSchema>) {
       VerificationToken: verificationToken,
     });
 
-    if (!newUser) {
+    if (!newUser || !newUser.AetherID) {
       return {
         success: false,
         message: 'Could not create account. Please try again.',
       };
     }
-
-    const verificationLink = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify?token=${verificationToken}`;
-
+    
     await sendVerificationEmail({
-      to: validatedData.email,
-      name: validatedData.fullName,
-      verificationLink,
+        to: validatedData.email,
+        name: validatedData.fullName,
+        aetherId: newUser.AetherID,
+        verificationToken: verificationToken,
     });
 
     return {success: true};
-  } catch (error) {
+  } catch (error: any) {
     return handleAirtableError(error);
   }
 }

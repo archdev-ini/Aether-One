@@ -8,7 +8,7 @@ type VerificationEmailPayload = {
   to: string;
   name: string;
   aetherId: string;
-  verificationLink: string;
+  verificationToken: string;
 };
 
 type LoginEmailPayload = {
@@ -55,13 +55,22 @@ const mockEmailLog = (type: string, payload: any) => {
 
 
 export async function sendVerificationEmail(payload: VerificationEmailPayload) {
+  const { to, name, aetherId, verificationToken } = payload;
+  
+  if (!process.env.NEXT_PUBLIC_BASE_URL) {
+    const errorMsg = "NEXT_PUBLIC_BASE_URL is not set. Cannot send verification email.";
+    console.error(errorMsg);
+    throw new Error(errorMsg);
+  }
+
+  const verificationLink = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify?token=${verificationToken}`;
+
   if (!transporter) {
-      mockEmailLog('Verification', payload);
+      mockEmailLog('Verification', {...payload, verificationLink});
       console.warn("Nodemailer is not configured. Using mock email log.");
       return { success: true };
   }
-
-  const { to, name, aetherId, verificationLink } = payload;
+  
   const subject = "Activate your Aether Account";
   const htmlBody = `
     <p>Hello 👋,</p>
@@ -101,7 +110,7 @@ export async function sendVerificationEmail(payload: VerificationEmailPayload) {
       return { success: true };
   } catch (error) {
       console.error("Error sending verification email via Nodemailer:", error);
-      return { success: false, message: "Could not send verification email." };
+      throw new Error("Could not send verification email.");
   }
 }
 
