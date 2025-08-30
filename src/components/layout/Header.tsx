@@ -53,7 +53,7 @@ function ThemeToggle() {
 }
 
 interface HeaderProps {
-    user: { name: string, id: string } | null;
+    user: { name: string; id: string } | null;
 }
 
 export function Header({ user }: HeaderProps) {
