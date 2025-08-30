@@ -8,7 +8,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { ArrowRight, ServerCrash } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 
 const categoryStyles = {
@@ -24,7 +24,7 @@ function formatDate(dateString: string) {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-        timeZone: 'UTC', // Ensure date is not shifted by local time zone
+        timeZone: 'UTC', 
     });
 }
 
@@ -68,8 +68,10 @@ export function UpdatesFeed({ initialPosts, initialError }: UpdatesFeedProps) {
             </div>
         )
     }
-
-    if (posts.length === 0) {
+    
+    // The initialPosts might be empty because data is still loading on the server, not because there are no posts.
+    // So we show skeletons only if there's no error AND the posts array is empty.
+    if (!error && posts.length === 0) {
         return (
              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 3 }).map((_, i) => <UpdateCardSkeleton key={i} />)}
@@ -96,7 +98,7 @@ export function UpdatesFeed({ initialPosts, initialError }: UpdatesFeedProps) {
                     <CardFooter>
                          <Button asChild variant="outline" className="w-full">
                             <Link href={post.link}>
-                                Read More <ArrowRight className="ml-2"/>
+                                Read More <ArrowRight className="ml-2 h-4 w-4"/>
                             </Link>
                         </Button>
                     </CardFooter>
