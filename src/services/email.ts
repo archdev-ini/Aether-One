@@ -1,3 +1,4 @@
+
 import nodemailer from 'nodemailer';
 
 // This is a mock email service.
@@ -113,16 +114,32 @@ export async function sendLoginEmail(payload: LoginEmailPayload) {
   }
   
   const { to, name, loginLink } = payload;
-  const subject = "Sign in to Aether 🔑";
+  const subject = "Your Aether Magic Login Link";
   const htmlBody = `
-     <div style="font-family: sans-serif; line-height: 1.6;">
-      <h2>Hi ${name},</h2>
-      <p>Click the button below to sign in to your Aether account:</p>
-      <a href="${loginLink}" style="background-color: #663399; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Sign In to Aether</a>
-      <p>This link will expire in 15 minutes.</p>
-      <p>If you didn’t request this, please ignore this email.</p>
-      <p>Best,<br/>The Aether Team</p>
-    </div>
+    <p>Hello 👋,</p>
+    <p>You requested to log in to your <b>Aether</b> account.</p>
+    <p>Click the button below to log in instantly:</p>
+    <p>
+      <a href="${loginLink}" 
+         style="padding:12px 20px;background:#4f46e5;color:white;text-decoration:none;
+                border-radius:8px;display:inline-block;font-weight:bold;">
+        Log in to Aether
+      </a>
+    </p>
+    <p>This link will expire in <b>10 minutes</b>. If it doesn’t work, copy and paste this into your browser:</p>
+    <p>${loginLink}</p>
+    <hr/>
+    <p>You’re receiving this email because a login was requested for <b>${to}</b>.</p>
+    <p>If you didn’t request this, you can ignore this message.</p>
+  `;
+
+  const textBody = `
+    Hello,
+
+    Click the link below to log in to your Aether account:
+    ${loginLink}
+
+    This link expires in 10 minutes. If you didn’t request this, ignore this message.
   `;
 
    try {
@@ -131,6 +148,7 @@ export async function sendLoginEmail(payload: LoginEmailPayload) {
           to: to,
           subject: subject,
           html: htmlBody,
+          text: textBody,
       });
       return { success: true };
   } catch (error) {
