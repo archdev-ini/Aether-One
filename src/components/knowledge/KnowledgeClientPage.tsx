@@ -50,9 +50,9 @@ export function KnowledgeClientPage({ initialResources, initialError }: Knowledg
     const [searchTerm, setSearchTerm] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("All Categories");
     const [typeFilter, setTypeFilter] = useState("All Types");
-    const [resources, setResources] = useState<Resource[]>(initialResources);
-    const [loading, setLoading] = useState(false); // Initially false as data is passed from server
-    const [error, setError] = useState<string | null>(initialError);
+    const [resources] = useState<Resource[]>(initialResources);
+    const [loading] = useState(false); // Initially false as data is passed from server
+    const [error] = useState<string | null>(initialError);
 
     const filteredResources = useMemo(() => {
         return resources.filter(resource => {
